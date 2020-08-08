@@ -10,9 +10,9 @@ body {
     text-align: center;
     padding: 0em;
     font-family: 'headerFont';
-    max-width: 1500px;
+    max-width: 1700px;
     margin: 0;
-    min-height: 100vh;
+
     align-items: center;
 }
 
@@ -54,13 +54,48 @@ main {
 }
 
 
-.current-month {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 0 10px grey;
-    width: 1700px;
-    height: 80vh;
+.days {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    display: inline-flex;
 }
+
+.days>span {
+
+    text-align: center;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+
+.current-month {
+
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px grey;
+    width: 100%;
+    height: 85%;
+
+}
+
+.row {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.row>div {
+
+    margin: auto;
+    height: 20%;
+    width: 40px;
+    margin: 70px 50px;
+}
+
+
 
 
 .today {
@@ -89,7 +124,6 @@ main {
     padding: 5px 0;
 
     /* Position the tooltip */
-    position: absolute;
     z-index: 1;
 }
 
