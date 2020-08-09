@@ -83,16 +83,13 @@ main {
     font-size: 30px;
     color: lightgray;
 
-}
-
-.row {
-    width: 100%;
     display: flex;
     flex-wrap: wrap;
+
+
 }
 
-.row div {
-
+.current-month>div {
 
     height: 160px;
     width: 230px;
@@ -106,21 +103,12 @@ main {
 
 }
 
-.row>div>div {
-
-    margin-top: 50px;
-}
-
-
-
-.row>div>span {
+.current-month>div>span {
 
     position: absolute;
     font-size: 20px;
     color: lightgray;
 }
-
-
 
 .today {
     font-size: 4em;
@@ -145,7 +133,7 @@ main {
     color: #fff;
     text-align: center;
     border-radius: 6px;
-    padding: 5px 0;
+    padding: 5px;
 
     /* Position the tooltip */
     z-index: 1;
