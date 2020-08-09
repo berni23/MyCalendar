@@ -70,22 +70,16 @@ main {
     margin: 0 auto;
     justify-content: space-between;
     font-size: 30px;
+    width: 230px;
 }
 
 
 .current-month {
 
     width: 100%;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 grey;
     height: 85%;
-    font-size: 30px;
-    color: lightgray;
-
     display: flex;
     flex-wrap: wrap;
-
 
 }
 
@@ -103,19 +97,29 @@ main {
 
 }
 
-.current-month>div>span {
+.cell {
 
-    position: absolute;
+    /* position: absolute;*/
     font-size: 20px;
     color: lightgray;
 }
 
-.today {
+.today-caption {
     font-size: 4em;
     /* margin-left: 100px;*/
     color: var(--color-primary);
 }
 
+.today-cell>span {
+
+    width: 10px;
+    height: 10px;
+    background-color: rgba(0, 0, 255, 0.4);
+    border-radius: 20px;
+    padding: 10px;
+    margin: 0 auto;
+
+}
 
 .tooltip {
     position: relative;
@@ -147,4 +151,109 @@ main {
 .iconify {
     width: 32px;
     height: 32px;
+}
+
+
+.hidden {
+
+    display: none;
+}
+
+/* responsiveness
+
+TO DO : HIDE EVENTS  in the responsive media queries!! */
+
+@media (max-width: 1400px) {
+
+    main {
+
+        width: 1130px;
+    }
+
+    .string-days>span {
+        text-align: center;
+        justify-content: space-between;
+    }
+
+    .current-month>div {
+        width: 150px;
+    }
+}
+
+@media (max-width: 1100px) {
+
+    main {
+        width: 850px;
+    }
+
+    .string-days>span {
+        text-align: center;
+        justify-content: space-between;
+    }
+
+    .current-month>div {
+        width: 115px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    main {
+        width: 425px;
+    }
+
+    .string-days>span {
+        text-align: center;
+        justify-content: space-between;
+        font-size: 15px;
+    }
+
+    .current-month>div {
+        width: 57.5px;
+        height: 80px;
+    }
+}
+
+@media (max-height: 700px) {
+
+    .current-month>div {
+        height: 80px;
+    }
+}
+
+
+@media (max-height: 550px) {
+
+    .current-month>div {
+        height: 40px;
+    }
+}
+
+@media (max-height: 450px) {
+
+    .current-month>div {
+        height: 40px;
+    }
+
+    .main-header {
+        display: none;
+    }
+}
+
+@media (max-height: 350px) {
+
+    .main-header {
+        display: none;
+    }
+}
+
+@media (max-height: 300px) {
+
+    .current-month>div {
+        height: 25px;
+    }
+
+    .main-header {
+        display: none;
+    }
 }

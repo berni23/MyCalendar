@@ -5,7 +5,7 @@ var monthsShort = months.map(el => el.slice(0, 3));
 
 
 var stringDays = document.querySelector(".string-days");
-var todaySpan = document.querySelector(".today");
+var todaySpan = document.querySelector(".today-caption");
 var todayTooltiptext = document.querySelector(".tooltiptext");
 
 const totalCells = 42;
@@ -25,6 +25,7 @@ function currentDate() {
     return {
 
         day,
+        date,
 
         setDate() {
 
@@ -54,17 +55,23 @@ var currentMonth = document.querySelector(".current-month");
 var numCells = today.daysInMonth();
 
 
-" Empty cells if month starts at different day than sunday"
+//Empty cells if month starts at different day than sunday
 
 for (let i = 0; i < today.firstDayMonthWeekDay(); i++)
     appendBlankCell();
 
-
-
 for (let i = 1; i <= today.daysInMonth(); i++) {
 
     let day = document.createElement("div");
-    day.innerHTML = "<span><br>" + i + "</span>";
+    day.innerHTML = "<br><span class = 'cell'>" + i + "</span>";
+
+
+
+    if (i === today.date) {
+
+        day.classList.add("today-cell");
+    }
+
     currentMonth.appendChild(day);
 
 }
@@ -76,13 +83,14 @@ console.log(today.firstDayMonthWeekDay());
 for (let i = 0; i < cellsLeft; i++)
     appendBlankCell();
 
-
 function appendBlankCell() {
 
     let blankCell = document.createElement("div");
     blankCell.innerHTML = "<span><br></span>";
     currentMonth.appendChild(blankCell);
 }
+
+
 /*--------------------------------------
 useful functions
 ------------------------------------*/
