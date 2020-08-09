@@ -10,7 +10,8 @@
     <!-- import the webpage's javascript file -->
 
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
-    <script src="/script.js" defer></script>
+    <script type="text/javascript" src="script.js" defer></script>
+
 </head>
 
 <body>
@@ -20,7 +21,8 @@
             <span class="iconify icon" data-icon="fxemoji:calendar" data-inline="false"></span>
             <p>CALENDAR</p>
         </div>
-        <div class="today tooltip"> Sat,8 Aug
+        <div class="tooltip">
+            <div class="today">Sat,8 Aug</div>
             <span class="tooltiptext">Complete date</span>
         </div>
         <div>
@@ -30,14 +32,14 @@
     </header>
 
     <main>
-        <section class="days">
-            <span id="monday">MON</span>
+        <section class="string-days">
+            <span>MON</span>
             <span>THU</span>
             <span>WED</span>
             <span>TUE</span>
             <span>FRI</span>
             <span>SAT</span>
-            <span id="sunday">SUN</span>
+            <span>SUN</span>
         </section>
         <section class="current-month">
 
@@ -96,12 +98,20 @@
                 <div><br><span>29</span></div>
                 <div><br><span>30</span></div>
                 <div><br><span>31</span></div>
+                <div><br><span>1</span></div>
+                <div><br><span>2</span></div>
+                <div><br><span>3</span></div>
+                <div><br><span>4</span></div>
+            </div>
+            <div class="row">
+                <div><br><span>5</span></div>
+                <div><br><span>6</span></div>
+                <div><br><span>7</span></div>
                 <div><br><span></span></div>
                 <div><br><span></span></div>
                 <div><br><span></span></div>
                 <div><br><span></span></div>
             </div>
-
 
         </section>
     </main>

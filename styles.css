@@ -55,7 +55,7 @@ main {
 }
 
 
-.days {
+.string-days {
     width: 100%;
     justify-content: space-between;
     align-items: center;
@@ -64,7 +64,7 @@ main {
     color: gray;
 }
 
-.days>span {
+.string-days>span {
 
     text-align: center;
     margin: 0 auto;
@@ -135,7 +135,7 @@ main {
 }
 
 .tooltiptext {
-    font-size: 0.3em;
+    font-size: 15px;
 }
 
 .tooltip .tooltiptext {
