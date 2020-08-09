@@ -51,6 +51,7 @@ body {
 
 main {
     margin: 20px;
+    width: 1700px;
 }
 
 
@@ -59,13 +60,16 @@ main {
     justify-content: space-between;
     align-items: center;
     display: inline-flex;
+    margin: auto;
+    color: gray;
 }
 
 .days>span {
 
     text-align: center;
-    justify-content: space-between;
     margin: 0 auto;
+    justify-content: space-between;
+    font-size: 30px;
 }
 
 
@@ -74,27 +78,47 @@ main {
     width: 100%;
     background-color: white;
     border-radius: 5px;
-    box-shadow: 0 0 10px grey;
-    width: 100%;
+    box-shadow: 0 0 grey;
     height: 85%;
+    font-size: 30px;
+    color: lightgray;
 
 }
 
 .row {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row div {
+
+
+    height: 160px;
+    width: 230px;
+    border-left: 1px solid black;
+    margin: auto;
     justify-content: space-between;
     align-items: center;
-    display: flex;
+    position: relative;
+    font-size: 20px;
+    color: black;
+
 }
 
-.row>div {
+.row>div>div {
 
-    margin: auto;
-    height: 20%;
-    width: 40px;
-    margin: 70px 50px;
+    margin-top: 50px;
 }
 
+
+
+.row>div>span {
+
+    position: absolute;
+    font-size: 20px;
+    color: lightgray;
+}
 
 
 
