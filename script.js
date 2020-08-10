@@ -22,7 +22,6 @@ function currentDate() {
     var dayWeekShort = daysWeekShort[day];
     var monthShort = monthsShort[numMonth];
     return {
-
         day,
         date,
         setDate() {
@@ -37,7 +36,6 @@ function currentDate() {
         }
     }
 }
-
 
 var today = currentDate();
 today.setDate();
@@ -91,8 +89,6 @@ function firstDayMonth(month, year) {
     return new Date(year, month, 1).getDay();
 }
 
-
-
 /* modal  logic */
 
 
@@ -116,11 +112,8 @@ window.addEventListener("click", windowOnClick);
 
 document.addEventListener('keydown', handleKeyDown);
 
-
 function handleKeyDown(event) {
-
-    if (event.keyCode === 27) {
-
+    if (event.keyCode === 27) { // hide modal on esc key pressed
         modal.classList.remove("show-modal");
     }
 }

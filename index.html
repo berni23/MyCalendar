@@ -38,7 +38,6 @@
             <span>TUE</span>
             <span>FRI</span>
             <span>SAT</span>
-
         </section>
         <section class="current-month">
 
@@ -61,9 +60,63 @@
     <div class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h1>Hello, I am a modal!</h1>
+            <h1>Create event</h1>
+
+            <form class="modal-form">
+
+                <ul>
+                    <li><label>Title:</label>
+                        <input type="text"></li>
+                    <li><br></li>
+                    <li><label>Initial date:</label>
+                        <input type="datetime-local"></li>
+
+                    <li><br></li>
+                    <li><input type="checkbox">
+                        <label class="checkbox-label" style="margin-left:120px; margin-top:0">End date</label></li>
+                    <li><br></li>
+                    <li> <label> End date:</label>
+                        <input type="datetime-local"></li>
+                    <li><br></li>
+
+                    <li>
+                        <input type="checkbox">
+                        <label class="checkbox-label" style="margin-left:120px; margin-top:0">Remind me when this event
+                            expires</label>
+                    </li>
+
+                    <li><br></li>
+
+                    <li> <label>Time:</label>
+                        <input list="timeRemind">
+                        <datalist id="timeRemind">
+                            <option value="5 min">
+                            </option>
+                            <option value="10 min">
+                            </option>
+                            <option value="15 min">
+                            </option>
+                            <option value="20 min"></option>
+                        </datalist></li>
+                    <li><br></li>
+                    <li><label>Description:</label><textarea rows="3" id="event-description"
+                            name="event-description"></textarea></li>
+                    <li><br></li>
+                    <li style="margin-top:100px"><label>Event type:</label>
+                        <input list="eventType">
+                        <datalist id="eventType">
+                            <option value="Meeting"></option>
+                            <option value="Reminder"></option>
+                        </datalist></li>
+                    <li><br></li>
+                </ul>
+                <button class="button-form" id="create-modal">Create</button>
+                <button class="button-form" id="cancel-modal">Cancel</button>
+
+            </form>
         </div>
     </div>
+</body>
 </body>
 
 </html>
