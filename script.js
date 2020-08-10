@@ -29,7 +29,7 @@ btnCreateEvent.addEventListener("click", validate);
 function currentDate() {
 
     var d = new Date();
-    var date = d.getDate(); // day in the month
+    var dayOfMonth = d.getDate(); // day in the month
     var numMonth = d.getMonth();
     var month = months[numMonth];
     var year = d.getFullYear();
@@ -37,18 +37,27 @@ function currentDate() {
     var dayWeek = daysWeek[day];
     var dayWeekShort = daysWeekShort[day];
     var monthShort = monthsShort[numMonth];
+    var millis = d.getTime;
     return {
-        day,
-        date,
+
+        d,
+        millis,
+        dayWeek,
+        dayOfMonth,
         setDate() {
-            todaySpan.textContent = dayWeekShort + ", " + date + " " + monthShort;
-            todayTooltiptext.textContent = dayWeek + ", " + date + " " + month + " " + year;
+            todaySpan.textContent = dayWeekShort + ", " + dayOfMonth + " " + monthShort;
+            todayTooltiptext.textContent = dayWeek + ", " + dayOfMonth + " " + month + " " + year;
         },
         daysInMonth() {
             return getDaysInMonth(numMonth, year);
         },
         firstDayMonthWeekDay() {
             return firstDayMonth(numMonth, year);
+        },
+
+        toIso() {
+            return d.toISOString();
+
         }
     }
 }
@@ -70,7 +79,7 @@ for (let i = 1; i <= today.daysInMonth(); i++) {
 
     let day = document.createElement("div");
     day.innerHTML = "<br><span class = 'cell'>" + i + "</span>";
-    if (i === today.date) {
+    if (i === today.dayOfMonth) {
         day.classList.add("today-cell");
     }
     currentMonth.appendChild(day);
@@ -88,11 +97,9 @@ function appendBlankCell() {
     currentMonth.appendChild(blankCell);
 }
 
-
 /*--------------------------------------
 useful functions
 ------------------------------------*/
-
 
 function getDaysInMonth(month, year) {
     // Here January is 1 based
@@ -107,7 +114,6 @@ function firstDayMonth(month, year) {
 
 /* modal  logic */
 
-
 var modal = document.querySelector(".modal");
 var closeButton = document.querySelector(".close-button");
 
@@ -117,7 +123,6 @@ function toggleModal() {
 
 function windowOnClick(event) {
     if (event.target === modal) {
-        // toggleModal();
         modal.classList.toggle("show-modal");
     }
 }
@@ -125,7 +130,6 @@ function windowOnClick(event) {
 btnModal.addEventListener("click", toggleModal);
 closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
-
 document.addEventListener('keydown', handleKeyDown);
 
 function handleKeyDown(event) {
@@ -133,7 +137,6 @@ function handleKeyDown(event) {
         modal.classList.remove("show-modal");
     }
 }
-
 
 /*
 -------------------------
@@ -154,23 +157,62 @@ var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
 */
 
+hasEndDate.addEventListener("click", toggleEndDate);
+
+function toggleEndDate() {
+    inputDateEnd.parentElement.classList.toggle("hidden");
+}
 
 function validate() {
 
+    console.log(inputDateIni.value);
+    let dateIni = new Date(inputDateIni.value);
+    let dateEnd;
 
+    let todayObj = today.d;
     clearErrors()
-
     const TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
 
     if (!TitleRegEx.test(inputTitle.value)) {
 
-        console.log("title regex not valid", inputTitle.value);
-        inputTitle.insertAdjacentHTML(
-            "afterend",
-            "<div class='error-msg' style ><p>User name must have more than 5 character</p></div>"
+        inputTitle.parentElement.insertAdjacentHTML(
+            "beforeend",
+            "<div class='error-msg'><p>Title must be between 1 and 60 characters</p></div>"
         );
         inputTitle.classList.add("error-input")
         //  throw "error";
+    }
+
+    if (inputDateIni.value == "" || todayObj.getTime() > dateIni.getTime()) {
+        inputDateIni.parentElement.insertAdjacentHTML(
+            "beforeend",
+            "<div class='error-msg'><p>Date event can't lay in the past or be blank</p></div>"
+        );
+        inputDateIni.classList.add("error-input")
+        //  throw "error";
+    }
+
+    if (hasEndDate.checked) {
+        dateEnd = new Date(inputDateEnd.value);
+
+        if (inputDateEnd.value == "") {
+
+            hasEndDate.parentElement.insertAdjacentHTML(
+                "beforeend",
+                "<div class='error-msg' style ='margin-top:20px'><p>Please provide an end date or uncheck the box</p></div>"
+            );
+            inputDateEnd.classList.add("error-input")
+            //  throw "error";
+
+        } else if (dateIni.getTime() > dateEnd.getTime()) {
+            inputDateEnd.parentElement.insertAdjacentHTML(
+                "beforeend",
+                "<div class='error-msg'><p>Please provide a date later than starting date</p></div>"
+            );
+            inputDateEnd.classList.add("error-input")
+            //  throw "error";
+
+        }
     }
 }
 
@@ -178,16 +220,16 @@ function clearErrors() {
 
     var errorMsg = document.querySelectorAll(".error-msg");
     var errorInput = document.querySelectorAll(".error-input");
-
     for (div of errorMsg) {
-
         div.remove();
     }
-
     for (div of errorInput) {
-
         div.classList.remove("error-input")
 
     }
+}
 
+function parseIsoString(s) {
+    var b = s.split(/\D+/);
+    return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
 }
