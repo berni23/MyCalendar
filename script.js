@@ -95,14 +95,32 @@ function firstDayMonth(month, year) {
 
 /* modal  logic */
 
+
 var modal = document.querySelector(".modal");
 var closeButton = document.querySelector(".close-button");
 
+function toggleModal() {
+    modal.classList.toggle("show-modal");
+}
+
 function windowOnClick(event) {
     if (event.target === modal) {
+        // toggleModal();
         modal.classList.toggle("show-modal");
     }
 }
+
 btnModal.addEventListener("click", toggleModal);
 closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
+
+document.addEventListener('keydown', handleKeyDown);
+
+
+function handleKeyDown(event) {
+
+    if (event.keyCode === 27) {
+
+        modal.classList.remove("show-modal");
+    }
+}
