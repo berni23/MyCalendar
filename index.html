@@ -66,21 +66,21 @@
 
                 <ul>
                     <li><label>Title:</label>
-                        <input type="text"></li>
+                        <input type="text" id="input-title"></li>
                     <li><br></li>
                     <li><label>Initial date:</label>
-                        <input type="datetime-local"></li>
+                        <input type="datetime-local" id="input-date-ini"></li>
 
                     <li><br></li>
-                    <li><input type="checkbox">
+                    <li><input type="checkbox" id="has-end-date">
                         <label class="checkbox-label" style="margin-left:120px; margin-top:0">End date</label></li>
                     <li><br></li>
                     <li> <label> End date:</label>
-                        <input type="datetime-local"></li>
+                        <input type="datetime-local" id="input-date-end"></li>
                     <li><br></li>
 
                     <li>
-                        <input type="checkbox">
+                        <input type="checkbox" id="remind-expire">
                         <label class="checkbox-label" style="margin-left:120px; margin-top:0">Remind me when this event
                             expires</label>
                     </li>
@@ -88,7 +88,7 @@
                     <li><br></li>
 
                     <li> <label>Time:</label>
-                        <input list="timeRemind">
+                        <input list="timeRemind" id="timer-remind">
                         <datalist id="timeRemind">
                             <option value="5 min">
                             </option>
@@ -103,17 +103,17 @@
                             name="event-description"></textarea></li>
                     <li><br></li>
                     <li style="margin-top:100px"><label>Event type:</label>
-                        <input list="eventType">
+                        <input list="eventType" id="event-type">
                         <datalist id="eventType">
                             <option value="Meeting"></option>
                             <option value="Reminder"></option>
                         </datalist></li>
                     <li><br></li>
                 </ul>
-                <button class="button-form" id="create-modal">Create</button>
-                <button class="button-form" id="cancel-modal">Cancel</button>
-
             </form>
+
+            <button class="button-form" id="create-event">Create</button>
+            <button class="button-form" id="cancel-creation">Cancel</button>
         </div>
     </div>
 </body>

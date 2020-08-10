@@ -2,13 +2,29 @@ var months = ["January", "February", "March", "April", "May", "June", "July", "A
 var daysWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var daysWeekShort = daysWeek.map(el => el.slice(0, 3));
 var monthsShort = months.map(el => el.slice(0, 3));
-
 var stringDays = document.querySelector(".string-days");
 var todaySpan = document.querySelector(".today-caption");
 var todayTooltiptext = document.querySelector(".tooltiptext");
-
 var btnModal = document.getElementById("add-event");
+
 const totalCells = 42;
+
+
+// event form
+
+var inputTitle = document.getElementById("input-title");
+var inputDateIni = document.getElementById("input-date-ini");
+var hasEndDate = document.getElementById("has-end-date");
+var inputDateEnd = document.getElementById("input-date-end");
+var remindExpire = document.getElementById("remind-expire");
+var timerRemind = document.getElementById("timer-remind");
+var inputEventDescription = document.getElementById("event-description");
+var eventType = document.getElementById("event-type");
+
+var btnCreateEvent = document.getElementById("create-event");
+var btnCancelEvent = document.getElementById("cancel-event");
+
+btnCreateEvent.addEventListener("click", validate);
 
 function currentDate() {
 
@@ -116,4 +132,62 @@ function handleKeyDown(event) {
     if (event.keyCode === 27) { // hide modal on esc key pressed
         modal.classList.remove("show-modal");
     }
+}
+
+
+/*
+-------------------------
+Form, validation function
+--------------------------
+*/
+
+/*var inputTitle = document.getElementById("input-title");
+var inputDateIni = document.getElementById("input-date-ini");
+var hasEndDate = document.getElementById("has-end-date");
+var inputDateEnd = document.getElementById("input-date-end");
+var remindExpire = document.getElementById("remind-expire");
+var timerRemind = document.getElementById("timer-remind");
+var inputEventDescription = document.getElementById("event-description");
+var eventType = document.getElementById("event-type");
+
+var btnCreateEvent = document.getElementById("create-event");
+var btnCancelEvent = document.getElementById("cancel-event");
+*/
+
+
+function validate() {
+
+
+    clearErrors()
+
+    const TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
+
+    if (!TitleRegEx.test(inputTitle.value)) {
+
+        console.log("title regex not valid", inputTitle.value);
+        inputTitle.insertAdjacentHTML(
+            "afterend",
+            "<div class='error-msg' style ><p>User name must have more than 5 character</p></div>"
+        );
+        inputTitle.classList.add("error-input")
+        //  throw "error";
+    }
+}
+
+function clearErrors() {
+
+    var errorMsg = document.querySelectorAll(".error-msg");
+    var errorInput = document.querySelectorAll(".error-input");
+
+    for (div of errorMsg) {
+
+        div.remove();
+    }
+
+    for (div of errorInput) {
+
+        div.classList.remove("error-input")
+
+    }
+
 }
