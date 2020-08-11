@@ -121,6 +121,12 @@ main {
     color: black;
 }
 
+.previous-next {
+
+    width: 220px;
+    display: flex;
+}
+
 
 .previous,
 .next {
@@ -182,7 +188,7 @@ main {
     visibility: visible;
 }
 
-.iconify {
+.icon {
     width: 32px;
     height: 32px;
 }
@@ -404,6 +410,21 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 57.5px;
         height: 80px;
     }
+
+
+    .previous-next {
+        width: 140px;
+        display: flex
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .title {
+
+        display: none;
+    }
 }
 
 @media (max-height: 700px) {
@@ -430,6 +451,8 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     .main-header {
         display: none;
     }
+
+
 }
 
 @media (max-height: 350px) {
