@@ -2,6 +2,8 @@ var months = ["January", "February", "March", "April", "May", "June", "July", "A
 var daysWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var daysWeekShort = daysWeek.map(el => el.slice(0, 3));
 var monthsShort = months.map(el => el.slice(0, 3));
+
+var calendarContainer = document.querySelector(".calendar-container");
 var stringDays = document.querySelector(".string-days");
 var todaySpan = document.querySelector(".today-caption");
 var todayTooltiptext = document.querySelector(".tooltiptext");
@@ -16,28 +18,45 @@ var remindExpire = document.getElementById("remind-expire");
 var timerRemind = document.getElementById("timer-remind");
 var inputEventDescription = document.getElementById("event-description");
 var inputEvent = document.getElementById("event-type");
-
 var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
 var monthLabel = document.querySelector(".month-year");
-btnCreateEvent.addEventListener("click", submitEvent);
 
+var btnPrevious = document.querySelector(".previous");
+var btnNext = document.querySelector(".next");
+
+btnCreateEvent.addEventListener("click", submitEvent);
+btnPrevious.addEventListener("click", previousMonth);
+btnNext.addEventListener("click", nextMonth);
 
 var today = new Date();
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
+var displayedMonth = Object.assign(currentMonth);
 buildMonth(currentMonth, today.getDate())
 setDate();
 
 monthLabel.textContent = months[today.getMonth()] + " " + today.getFullYear();
 
-function monthYear(numMonth, year) {
-
+function monthYear(numMonthIni, yearIni) {
     //var monthObject = new Date(year, numMonth);
-    var monthName = months[numMonth];
+    var monthName = months[numMonthIni];
+    var year = yearIni;
+    var numMonth = numMonthIni;
+
     return {
         //    monthObject,
-        monthName,
-        numMonth,
+        getMonthName() {
+
+            return monthName;
+        },
+        getNumMonth() {
+
+            return numMonth;
+        },
+        getYear() {
+
+            return year;
+        },
         daysInMonth() {
             return getDaysInMonth(numMonth, year);
         },
@@ -47,6 +66,16 @@ function monthYear(numMonth, year) {
         toIso() {
             return d.toISOString();
 
+        },
+        addMonth(n) {
+            let monthObject = new Date(year, numMonth);
+            monthObject.setMonth(monthObject.getMonth() + n);
+            year = monthObject.getFullYear();
+            numMonth = monthObject.getMonth();
+            monthName = months[monthObject.getMonth()];
+
+            console.log(year);
+            console.log(monthName);
         }
     }
 }
@@ -60,34 +89,54 @@ function setDate() {
 function buildMonth(month, dayInMonth) {
 
     // dayInMonth only provided if we want to build the current month
-    var currentMonth = document.querySelector(".current-month");
     var numCells = month.daysInMonth();
 
     //Empty cells if month starts at different day than sunday
 
     for (let i = 0; i < month.firstDayMonthWeekDay(); i++)
         appendBlankCell();
-
-    for (let i = 1; i <= month.daysInMonth(); i++) {
+    for (let i = 1; i <= numCells; i++) {
 
         let day = document.createElement("div");
         day.innerHTML = "<br><span class = 'cell'>" + i + "</span>";
-        if (i === dayInMonth) {
+        if (i === dayInMonth && dayInMonth) {
             day.classList.add("today-cell");
         }
-        currentMonth.appendChild(day);
+        calendarContainer.appendChild(day);
     }
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
-
     for (let i = 0; i < cellsLeft; i++)
         appendBlankCell();
 
     function appendBlankCell() {
         let blankCell = document.createElement("div");
         blankCell.innerHTML = "<span><br></span>";
-        currentMonth.appendChild(blankCell);
+        calendarContainer.appendChild(blankCell);
     }
 
+}
+
+function clearCalendar() {
+
+    calendarContainer.textContent = "";
+}
+
+function previousMonth() {
+
+    clearCalendar();
+    displayedMonth.addMonth(-1);
+    buildMonth(displayedMonth);
+    console.log(displayedMonth.getMonthName());
+    console.log(displayedMonth.getYear());
+    monthLabel.textContent = displayedMonth.getMonthName() + " " + displayedMonth.getYear();
+
+}
+
+function nextMonth() {
+    clearCalendar();
+    displayedMonth.addMonth(1);
+    buildMonth(displayedMonth);
+    monthLabel.textContent = displayedMonth.getMonthName() + " " + displayedMonth.getYear();
 }
 
 /*--------------------------------------
@@ -141,7 +190,6 @@ remindExpire.addEventListener("click", toggleExpire);
 function submitEvent() {
 
     if (validate()) {
-        console.log("validate true");
         let newEvent = createEvent();
         let name = monthName(newEvent);
         let monthObject = getMonthObject(name, newEvent);
@@ -173,8 +221,6 @@ function getMonthObject(name, event) {
         let lengthMonth = getDaysInMonth(monthNum, year);
         month = populateMonth(lengthMonth);
     }
-    console.log("array month", month);
-    console.log(name);
     return month;
 }
 

@@ -73,14 +73,14 @@ main {
 
 
 
-.current-month {
+.calendar-container {
     width: 100%;
     height: 85%;
     display: flex;
     flex-wrap: wrap;
 }
 
-.current-month>div {
+.calendar-container>div {
     height: 160px;
     width: 230px;
     border-left: 1px solid black;
@@ -92,7 +92,7 @@ main {
     color: black;
 }
 
-.current-month>div:nth-child(7n) {
+.calendar-container>div:nth-child(7n) {
 
     border-right: 1px solid black;
 }
@@ -367,7 +367,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         justify-content: space-between;
     }
 
-    .current-month>div {
+    .calendar-container>div {
         width: 150px;
     }
 }
@@ -383,7 +383,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         justify-content: space-between;
     }
 
-    .current-month>div {
+    .calendar-container>div {
         width: 115px;
     }
 }
@@ -400,7 +400,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         font-size: 15px;
     }
 
-    .current-month>div {
+    .calendar-container>div {
         width: 57.5px;
         height: 80px;
     }
@@ -408,7 +408,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
 @media (max-height: 700px) {
 
-    .current-month>div {
+    .calendar-container>div {
         height: 80px;
     }
 }
@@ -416,14 +416,14 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
 @media (max-height: 550px) {
 
-    .current-month>div {
+    .calendar-container>div {
         height: 40px;
     }
 }
 
 @media (max-height: 450px) {
 
-    .current-month>div {
+    .calendar-container>div {
         height: 40px;
     }
 
@@ -441,7 +441,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
 @media (max-height: 300px) {
 
-    .current-month>div {
+    .calendar-container>div {
         height: 25px;
     }
 
