@@ -141,7 +141,6 @@ main {
     height: 32px;
 }
 
-
 /* modal css*/
 
 /* 1 - we create a semi-transparent background color with a transition */
@@ -270,6 +269,36 @@ main {
     margin: auto;
 
 
+}
+
+/* event styles depending on event type chosen */
+
+.Meeting {
+
+    background-color: blue;
+
+}
+
+.Personal {
+
+    background-color: lightgreen;
+}
+
+
+.Study {
+
+    background-color: yellow;
+}
+
+
+.event-other {
+
+    background-color: lightblue;
+}
+
+.Reminder {
+
+    background-color: red;
 }
 
 .hidden {

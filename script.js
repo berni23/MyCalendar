@@ -6,12 +6,8 @@ var stringDays = document.querySelector(".string-days");
 var todaySpan = document.querySelector(".today-caption");
 var todayTooltiptext = document.querySelector(".tooltiptext");
 var btnModal = document.getElementById("add-event");
-
 const totalCells = 42;
-
-
 // event form
-
 var inputTitle = document.getElementById("input-title");
 var inputDateIni = document.getElementById("input-date-ini");
 var hasEndDate = document.getElementById("has-end-date");
@@ -19,12 +15,11 @@ var inputDateEnd = document.getElementById("input-date-end");
 var remindExpire = document.getElementById("remind-expire");
 var timerRemind = document.getElementById("timer-remind");
 var inputEventDescription = document.getElementById("event-description");
-var eventType = document.getElementById("event-type");
+var inputEvent = document.getElementById("event-type");
 
 var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
-
-btnCreateEvent.addEventListener("click", validate);
+btnCreateEvent.addEventListener("click", submitEvent);
 
 function currentDate() {
 
@@ -86,7 +81,6 @@ for (let i = 1; i <= today.daysInMonth(); i++) {
 }
 
 var cellsLeft = totalCells - today.daysInMonth() - today.firstDayMonthWeekDay();
-console.log(today.firstDayMonthWeekDay());
 
 for (let i = 0; i < cellsLeft; i++)
     appendBlankCell();
@@ -101,10 +95,10 @@ function appendBlankCell() {
 useful functions
 ------------------------------------*/
 
-function getDaysInMonth(month, year) {
+function getDaysInMonth(numMonth, year) {
     // Here January is 1 based
     //Day 0 is the last day in the previous month
-    return new Date(year, month, 0).getDate()
+    return new Date(year, numMonth, 0).getDate()
 
 }
 
@@ -143,44 +137,74 @@ function handleKeyDown(event) {
 Form, validation function
 --------------------------
 */
-
-/*var inputTitle = document.getElementById("input-title");
-var inputDateIni = document.getElementById("input-date-ini");
-var hasEndDate = document.getElementById("has-end-date");
-var inputDateEnd = document.getElementById("input-date-end");
-var remindExpire = document.getElementById("remind-expire");
-var timerRemind = document.getElementById("timer-remind");
-var inputEventDescription = document.getElementById("event-description");
-var eventType = document.getElementById("event-type");
-
-var btnCreateEvent = document.getElementById("create-event");
-var btnCancelEvent = document.getElementById("cancel-event");
-*/
-
 hasEndDate.addEventListener("click", toggleEndDate);
+remindExpire.addEventListener("click", toggleExpire);
 
-function toggleEndDate() {
-    inputDateEnd.parentElement.classList.toggle("hidden");
+function submitEvent() {
+
+    if (validate()) {
+
+        console.log("validate true");
+
+        let newEvent = createEvent();
+        let name = monthName(newEvent);
+        let monthObject = getMonthObject(name, newEvent);
+
+    }
 }
+
+function createEvent() {
+
+    currentEventType = inputEvent.value ? inputEvent.value : "event-other";
+    return {
+        dateIni: new Date(inputDateIni.value),
+        dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
+        timeReminder: timerRemind.value,
+        description: inputEventDescription.value,
+        eventType: currentEventType
+    }
+}
+
+function monthName(event) {
+
+    let monthNum = event.dateIni.getMonth();
+    return months[monthNum] + event.dateIni.getFullYear();
+
+}
+
+function getMonthObject(name, event) {
+
+    let year = event.dateIni.getFullYear;
+    let monthNum = event.dateIni.getMonth;
+    let month = JSON.parse(localStorage.getItem(name));
+
+    if (!month) {
+        let lengthMonth = getDaysInMonth(monthNum, year);
+        month = populateMonth(lengthMonth);
+    }
+    console.log("array month", month);
+    console.log(name);
+    return month;
+}
+
 
 function validate() {
 
-    console.log(inputDateIni.value);
+    let validation = true;
     let dateIni = new Date(inputDateIni.value);
     let dateEnd;
-
     let todayObj = today.d;
-    clearErrors()
     const TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
 
-    if (!TitleRegEx.test(inputTitle.value)) {
+    clearErrors()
 
+    if (!TitleRegEx.test(inputTitle.value)) {
         inputTitle.parentElement.insertAdjacentHTML(
             "beforeend",
             "<div class='error-msg'><p>Title must be between 1 and 60 characters</p></div>"
         );
         inputTitle.classList.add("error-input")
-        //  throw "error";
+        validation = false;
     }
 
     if (inputDateIni.value == "" || todayObj.getTime() > dateIni.getTime()) {
@@ -189,35 +213,56 @@ function validate() {
             "<div class='error-msg'><p>Date event can't lay in the past or be blank</p></div>"
         );
         inputDateIni.classList.add("error-input")
-        //  throw "error";
+        validation = false;
     }
 
     if (hasEndDate.checked) {
         dateEnd = new Date(inputDateEnd.value);
 
         if (inputDateEnd.value == "") {
-
             hasEndDate.parentElement.insertAdjacentHTML(
                 "beforeend",
                 "<div class='error-msg' style ='margin-top:20px'><p>Please provide an end date or uncheck the box</p></div>"
             );
             inputDateEnd.classList.add("error-input")
-            //  throw "error";
-
+            validation = false;
         } else if (dateIni.getTime() > dateEnd.getTime()) {
             inputDateEnd.parentElement.insertAdjacentHTML(
                 "beforeend",
                 "<div class='error-msg'><p>Please provide a date later than starting date</p></div>"
             );
             inputDateEnd.classList.add("error-input")
-            //  throw "error";
+            validation = false
 
         }
     }
+
+    if (remindExpire.checked) {
+        if (timerRemind.value == "") {
+            remindExpire.parentElement.insertAdjacentHTML(
+                "beforeend",
+                "<div class='error-msg' style ='margin-top:20px'><p>Please provide a time or uncheck the box</p></div>"
+            );
+            remindExpire.classList.add("error-input")
+            validation = false;
+        }
+    }
+    return validation;
+}
+
+
+// UTILS
+
+
+function toggleEndDate() {
+    inputDateEnd.parentElement.classList.toggle("hidden");
+}
+
+function toggleExpire() {
+    timerRemind.parentElement.classList.toggle("hidden");
 }
 
 function clearErrors() {
-
     var errorMsg = document.querySelectorAll(".error-msg");
     var errorInput = document.querySelectorAll(".error-input");
     for (div of errorMsg) {
@@ -225,11 +270,21 @@ function clearErrors() {
     }
     for (div of errorInput) {
         div.classList.remove("error-input")
-
     }
 }
 
 function parseIsoString(s) {
     var b = s.split(/\D+/);
     return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+}
+
+function populateMonth(len) {
+
+    var array = [];
+    for (let i = 0; i < len; i++) {
+
+        array.push([]);
+    }
+
+    return array;
 }

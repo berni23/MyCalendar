@@ -4,11 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="styles.css" />
-
     <!-- import the webpage's javascript file -->
-
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
     <script type="text/javascript" src="script.js" defer></script>
 
@@ -28,7 +25,6 @@
             <button class="modal-button" id="add-event">+</button>
         </div>
     </header>
-
     <main>
         <section class="string-days">
             <span>SUN</span>
@@ -40,9 +36,7 @@
             <span>SAT</span>
         </section>
         <section class="current-month">
-
             <!--  <div><span><br>1</span>
-
                 <div><span style="background-color: blue; border-radius:10px; padding:3px; font-size:15px">assembler
                             10 am</span>
                         <br>
@@ -56,21 +50,17 @@
             -->
         </section>
     </main>
-
     <div class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h1>Create event</h1>
-
             <form class="modal-form">
-
                 <ul>
                     <li><label>Title:</label>
                         <input type="text" id="input-title"></li>
                     <li><br></li>
                     <li><label>Initial date:</label>
                         <input type="datetime-local" id="input-date-ini"></li>
-
                     <li><br></li>
                     <li><input type="checkbox" id="has-end-date">
                         <label class="checkbox-label" style="margin-left:120px; margin-top:0">End date</label></li>
@@ -78,25 +68,20 @@
                     <li class="hidden"><label> End date:</label>
                         <input type="datetime-local" id="input-date-end"></li>
                     <li><br></li>
-
                     <li>
                         <input type="checkbox" id="remind-expire">
                         <label class="checkbox-label" style="margin-left:120px; margin-top:0">Remind me when this event
                             expires</label>
                     </li>
-
                     <li><br></li>
-
-                    <li> <label>Time:</label>
+                    <li class="hidden"> <label>Time:</label>
                         <input list="timeRemind" id="timer-remind">
                         <datalist id="timeRemind">
-                            <option value="5 min">
-                            </option>
-                            <option value="10 min">
-                            </option>
-                            <option value="15 min">
-                            </option>
-                            <option value="20 min"></option>
+                            <option value="5 min" data-millis="300000"></option>
+                            <option value="10 min" data-millis="600000"> </option>
+                            <option value="15 min" data-millis="900000"></option>
+                            <option value="30 min" data-millis="1800000"></option>
+                            <option value="1 hour" data-millis="3600000"></option>
                         </datalist></li>
                     <li><br></li>
                     <li><label>Description:</label><textarea rows="3" id="event-description"
@@ -105,13 +90,14 @@
                     <li style="margin-top:100px"><label>Event type:</label>
                         <input list="eventType" id="event-type">
                         <datalist id="eventType">
-                            <option value="Meeting"></option>
+                            <option value="Meeting" data-color="lightgreen"></option>
+                            <option value="Personal"></option>
+                            <option value="Study"></option>
                             <option value="Reminder"></option>
                         </datalist></li>
                     <li><br></li>
                 </ul>
             </form>
-
             <button class="button-form" id="create-event">Create</button>
             <button class="button-form" id="cancel-creation">Cancel</button>
         </div>
