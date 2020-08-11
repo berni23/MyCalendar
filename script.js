@@ -21,35 +21,26 @@ var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
 btnCreateEvent.addEventListener("click", submitEvent);
 
-function currentDate() {
 
-    var d = new Date();
-    var dayOfMonth = d.getDate(); // day in the month
-    var numMonth = d.getMonth();
-    var month = months[numMonth];
-    var year = d.getFullYear();
-    var day = d.getDay() // day in the week
-    var dayWeek = daysWeek[day];
-    var dayWeekShort = daysWeekShort[day];
-    var monthShort = monthsShort[numMonth];
-    var millis = d.getTime;
+var today = new Date();
+var currentMonth = monthYear(today.getMonth(), today.getFullYear());
+buildMonth(currentMonth, today.getDate())
+setDate();
+
+function monthYear(numMonth, year) {
+
+    //var monthObject = new Date(year, numMonth);
+    var monthName = months[numMonth];
     return {
-
-        d,
-        millis,
-        dayWeek,
-        dayOfMonth,
-        setDate() {
-            todaySpan.textContent = dayWeekShort + ", " + dayOfMonth + " " + monthShort;
-            todayTooltiptext.textContent = dayWeek + ", " + dayOfMonth + " " + month + " " + year;
-        },
+        //    monthObject,
+        monthName,
+        numMonth,
         daysInMonth() {
             return getDaysInMonth(numMonth, year);
         },
         firstDayMonthWeekDay() {
             return firstDayMonth(numMonth, year);
         },
-
         toIso() {
             return d.toISOString();
 
@@ -57,46 +48,49 @@ function currentDate() {
     }
 }
 
-var today = currentDate();
-today.setDate();
-
+function setDate() {
+    let d = new Date();
+    todaySpan.textContent = daysWeekShort[d.getDay()] + ", " + d.getDate() + " " + monthsShort[d.getMonth()];
+    todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+}
 // populate calendar days
+function buildMonth(month, dayInMonth) {
 
-var currentMonth = document.querySelector(".current-month");
-var numCells = today.daysInMonth();
+    // dayInMonth only provided if we want to build the current month
+    var currentMonth = document.querySelector(".current-month");
+    var numCells = month.daysInMonth();
 
-//Empty cells if month starts at different day than sunday
+    //Empty cells if month starts at different day than sunday
 
-for (let i = 0; i < today.firstDayMonthWeekDay(); i++)
-    appendBlankCell();
+    for (let i = 0; i < month.firstDayMonthWeekDay(); i++)
+        appendBlankCell();
 
-for (let i = 1; i <= today.daysInMonth(); i++) {
+    for (let i = 1; i <= month.daysInMonth(); i++) {
 
-    let day = document.createElement("div");
-    day.innerHTML = "<br><span class = 'cell'>" + i + "</span>";
-    if (i === today.dayOfMonth) {
-        day.classList.add("today-cell");
+        let day = document.createElement("div");
+        day.innerHTML = "<br><span class = 'cell'>" + i + "</span>";
+        if (i === dayInMonth) {
+            day.classList.add("today-cell");
+        }
+        currentMonth.appendChild(day);
     }
-    currentMonth.appendChild(day);
+    var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
+
+    for (let i = 0; i < cellsLeft; i++)
+        appendBlankCell();
+
+    function appendBlankCell() {
+        let blankCell = document.createElement("div");
+        blankCell.innerHTML = "<span><br></span>";
+        currentMonth.appendChild(blankCell);
+    }
+
 }
-
-var cellsLeft = totalCells - today.daysInMonth() - today.firstDayMonthWeekDay();
-
-for (let i = 0; i < cellsLeft; i++)
-    appendBlankCell();
-
-function appendBlankCell() {
-    let blankCell = document.createElement("div");
-    blankCell.innerHTML = "<span><br></span>";
-    currentMonth.appendChild(blankCell);
-}
-
 /*--------------------------------------
 useful functions
 ------------------------------------*/
 
 function getDaysInMonth(numMonth, year) {
-    // Here January is 1 based
     //Day 0 is the last day in the previous month
     return new Date(year, numMonth, 0).getDate()
 
@@ -143,18 +137,14 @@ remindExpire.addEventListener("click", toggleExpire);
 function submitEvent() {
 
     if (validate()) {
-
         console.log("validate true");
-
         let newEvent = createEvent();
         let name = monthName(newEvent);
         let monthObject = getMonthObject(name, newEvent);
-
     }
 }
 
 function createEvent() {
-
     currentEventType = inputEvent.value ? inputEvent.value : "event-other";
     return {
         dateIni: new Date(inputDateIni.value),
@@ -166,16 +156,13 @@ function createEvent() {
 }
 
 function monthName(event) {
-
     let monthNum = event.dateIni.getMonth();
     return months[monthNum] + event.dateIni.getFullYear();
-
 }
 
 function getMonthObject(name, event) {
-
-    let year = event.dateIni.getFullYear;
-    let monthNum = event.dateIni.getMonth;
+    let year = event.dateIni.getFullYear();
+    let monthNum = event.dateIni.getMonth();
     let month = JSON.parse(localStorage.getItem(name));
 
     if (!month) {
@@ -189,15 +176,11 @@ function getMonthObject(name, event) {
 
 
 function validate() {
-
     let validation = true;
     let dateIni = new Date(inputDateIni.value);
     let dateEnd;
-    let todayObj = today.d;
     const TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
-
     clearErrors()
-
     if (!TitleRegEx.test(inputTitle.value)) {
         inputTitle.parentElement.insertAdjacentHTML(
             "beforeend",
@@ -207,7 +190,7 @@ function validate() {
         validation = false;
     }
 
-    if (inputDateIni.value == "" || todayObj.getTime() > dateIni.getTime()) {
+    if (inputDateIni.value == "" || today.getTime() > dateIni.getTime()) {
         inputDateIni.parentElement.insertAdjacentHTML(
             "beforeend",
             "<div class='error-msg'><p>Date event can't lay in the past or be blank</p></div>"
@@ -236,7 +219,6 @@ function validate() {
 
         }
     }
-
     if (remindExpire.checked) {
         if (timerRemind.value == "") {
             remindExpire.parentElement.insertAdjacentHTML(
@@ -249,7 +231,6 @@ function validate() {
     }
     return validation;
 }
-
 
 // UTILS
 
@@ -279,12 +260,9 @@ function parseIsoString(s) {
 }
 
 function populateMonth(len) {
-
     var array = [];
     for (let i = 0; i < len; i++) {
-
         array.push([]);
     }
-
     return array;
 }
