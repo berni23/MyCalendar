@@ -90,6 +90,7 @@ function buildMonth(month, dayInMonth) {
 
     // dayInMonth only provided if we want to build the current month
     var numCells = month.daysInMonth();
+    console.log("days in month", numCells);
 
     //Empty cells if month starts at different day than sunday
 
@@ -145,14 +146,12 @@ useful functions
 
 function getDaysInMonth(numMonth, year) {
     //Day 0 is the last day in the previous month
-    return new Date(year, numMonth, 0).getDate()
-
+    return new Date(year, numMonth + 1, 0).getDate()
 }
 
 function firstDayMonth(month, year) {
     return new Date(year, month, 1).getDay();
 }
-
 /* modal  logic */
 
 var modal = document.querySelector(".modal");
@@ -167,7 +166,6 @@ function windowOnClick(event) {
         modal.classList.toggle("show-modal");
     }
 }
-
 btnModal.addEventListener("click", toggleModal);
 closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
@@ -223,7 +221,6 @@ function getMonthObject(name, event) {
     }
     return month;
 }
-
 
 function validate() {
     let validation = true;
