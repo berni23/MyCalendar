@@ -39,7 +39,8 @@ ul {
 
 .modal-button {
     border-radius: 50%;
-    background-color: var(--color-primary);
+    /*background-color: var(--color-primary);*/
+    background-color: black;
     color: white;
     font-size: 50px;
     width: 60px;
@@ -59,7 +60,7 @@ main {
     align-items: center;
     display: inline-flex;
     margin: auto;
-    color: gray;
+    color: goldenrod;
 }
 
 .string-days>span {
@@ -69,6 +70,8 @@ main {
     font-size: 30px;
     width: 230px;
 }
+
+
 
 .current-month {
     width: 100%;
@@ -89,22 +92,65 @@ main {
     color: black;
 }
 
+.current-month>div:nth-child(7n) {
+
+    border-right: 1px solid black;
+}
+
 .cell {
-    /* position: absolute;*/
     font-size: 20px;
-    color: lightgray;
+    color: black;
 }
 
 .today-caption {
     font-size: 4em;
     /* margin-left: 100px;*/
-    color: var(--color-primary);
+    /* color: var(--color-primary);*/
+    color: goldenrod;
+}
+
+.options {
+
+    display: flex;
+}
+
+.month-year {
+
+    margin: auto 5px;
+    font-size: 1.5em;
+    color: black;
+}
+
+
+.previous,
+.next {
+    position: relative;
+    background-color: black;
+    color: white;
+    height: 25px;
+    display: center;
+    margin: auto;
+    text-align: center;
+    padding: 5px;
+
+}
+
+.previous:hover,
+.next:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.round {
+    border-radius: 5px;
 }
 
 .today-cell>span {
     width: 10px;
     height: 10px;
-    background-color: rgba(0, 0, 255, 0.4);
+    /*background-color: rgba(0, 0, 255, 0.4)*/
+    ;
+    background-color: goldenrod;
     border-radius: 20px;
     padding: 10px;
     margin: 0 auto;

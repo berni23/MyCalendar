@@ -19,6 +19,7 @@ var inputEvent = document.getElementById("event-type");
 
 var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
+var monthLabel = document.querySelector(".month-year");
 btnCreateEvent.addEventListener("click", submitEvent);
 
 
@@ -26,6 +27,8 @@ var today = new Date();
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 buildMonth(currentMonth, today.getDate())
 setDate();
+
+monthLabel.textContent = months[today.getMonth()] + " " + today.getFullYear();
 
 function monthYear(numMonth, year) {
 
@@ -86,6 +89,7 @@ function buildMonth(month, dayInMonth) {
     }
 
 }
+
 /*--------------------------------------
 useful functions
 ------------------------------------*/
