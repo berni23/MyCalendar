@@ -42,9 +42,12 @@ function monthYear(numMonthIni, yearIni) {
     var monthName = months[numMonthIni];
     var year = yearIni;
     var numMonth = numMonthIni;
-
     return {
         //    monthObject,
+        getMonthYear() {
+
+            return monthName + year;
+        },
         getMonthName() {
 
             return monthName;
@@ -68,14 +71,11 @@ function monthYear(numMonthIni, yearIni) {
 
         },
         addMonth(n) {
-            let monthObject = new Date(year, numMonth);
-            monthObject.setMonth(monthObject.getMonth() + n);
-            year = monthObject.getFullYear();
-            numMonth = monthObject.getMonth();
-            monthName = months[monthObject.getMonth()];
-
-            console.log(year);
-            console.log(monthName);
+            let d = new Date(year, numMonth);
+            d.setMonth(d.getMonth() + n);
+            year = d.getFullYear();
+            numMonth = d.getMonth();
+            monthName = months[d.getMonth()];
         }
     }
 }
@@ -88,24 +88,42 @@ function setDate() {
 // populate calendar days
 function buildMonth(month, dayInMonth) {
 
-    // dayInMonth only provided if we want to build the current month
+    //dayInMonth only provided if we want to build the current month
     var numCells = month.daysInMonth();
-    console.log("days in month", numCells);
+    var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
 
+    console.log(month.getMonthYear());
+    var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
+
+    console.log("month stored", monthStored);
     //Empty cells if month starts at different day than sunday
 
     for (let i = 0; i < month.firstDayMonthWeekDay(); i++)
         appendBlankCell();
-    for (let i = 1; i <= numCells; i++) {
 
-        let day = document.createElement("div");
-        day.innerHTML = "<br><span class = 'cell'>" + i + "</span>";
-        if (i === dayInMonth && dayInMonth) {
-            day.classList.add("today-cell");
+    if (monthStored) {
+        for (let i = 0; i < numCells; i++) {
+            day = createDayContainer(i);
+
+            var eventContainer = document.createElement("div");
+            eventContainer.classList.add("event-wrapper");
+            for (event of monthStored[i]) {
+
+                newElement = displayEvent(event)
+                eventContainer.appendChild(newElement);
+                eventContainer.insertAdjacentHTML('beforeend', '<br>');
+
+            }
+            day.appendChild(eventContainer);
+            calendarContainer.appendChild(day);
         }
-        calendarContainer.appendChild(day);
+    } else {
+
+        for (let i = 0; i < numCells; i++) {
+            day = createDayContainer(i);
+            calendarContainer.appendChild(day);
+        }
     }
-    var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
     for (let i = 0; i < cellsLeft; i++)
         appendBlankCell();
 
@@ -115,22 +133,39 @@ function buildMonth(month, dayInMonth) {
         calendarContainer.appendChild(blankCell);
     }
 
+    function createDayContainer(n) {
+        n++;
+        let day = document.createElement("div");
+        day.innerHTML = "<br><span class = 'cell'>" + n + "</span>";
+        if (n === dayInMonth && dayInMonth) {
+            day.classList.add("today-cell");
+        }
+        return day
+
+    }
+
+    function displayEvent(event) {
+        newElement = document.createElement("span");
+        newElement.textContent = event.title;
+        newElement.classList.add("default-event");
+        newElement.classList.add(event.eventType);
+
+        console.log(event.eventType);
+        return newElement;
+
+    }
+
 }
 
 function clearCalendar() {
-
     calendarContainer.textContent = "";
 }
 
 function previousMonth() {
-
     clearCalendar();
     displayedMonth.addMonth(-1);
     buildMonth(displayedMonth);
-    console.log(displayedMonth.getMonthName());
-    console.log(displayedMonth.getYear());
     monthLabel.textContent = displayedMonth.getMonthName() + " " + displayedMonth.getYear();
-
 }
 
 function nextMonth() {
@@ -176,7 +211,6 @@ function handleKeyDown(event) {
         modal.classList.remove("show-modal");
     }
 }
-
 /*
 -------------------------
 Form, validation function
@@ -187,16 +221,31 @@ remindExpire.addEventListener("click", toggleExpire);
 
 function submitEvent() {
 
+    // localStorage.clear();
     if (validate()) {
-        let newEvent = createEvent();
-        let name = monthName(newEvent);
-        let monthObject = getMonthObject(name, newEvent);
+        var newEvent = createEvent();
+        var name = monthNameEvent(newEvent);
+        var monthArray = getMonthObject(name, newEvent);
+        localStorage.setItem(name, JSON.stringify(monthArray));
     }
+
+    //console.log(name);
+    let month = JSON.parse(localStorage.getItem(name));
+
+    console.log("name", name);
+    console.log("object", month);
+
+    // console.log("object from local storage without being parsed", localStorage.getItem(name));
+    // console.log("retrieved object from local storage :", month);
+
+
 }
 
 function createEvent() {
     currentEventType = inputEvent.value ? inputEvent.value : "event-other";
+    titleEvent = inputTitle.value;
     return {
+        title: titleEvent.trim(),
         dateIni: new Date(inputDateIni.value),
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
         timeReminder: timerRemind.value,
@@ -205,7 +254,7 @@ function createEvent() {
     }
 }
 
-function monthName(event) {
+function monthNameEvent(event) {
     let monthNum = event.dateIni.getMonth();
     return months[monthNum] + event.dateIni.getFullYear();
 }
@@ -214,11 +263,14 @@ function getMonthObject(name, event) {
     let year = event.dateIni.getFullYear();
     let monthNum = event.dateIni.getMonth();
     let month = JSON.parse(localStorage.getItem(name));
+    let day = event.dateIni.getDate();
 
     if (!month) {
         let lengthMonth = getDaysInMonth(monthNum, year);
         month = populateMonth(lengthMonth);
     }
+
+    month[day - 1].push(event);
     return month;
 }
 
