@@ -37,15 +37,14 @@ closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
 document.addEventListener('keydown', handleKeyDown);
 todaySpan.addEventListener("click", backToCurrentMonth)
+hasEndDate.addEventListener("click", toggleEndDate);
+remindExpire.addEventListener("click", toggleExpire);
 
 var today = new Date();
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = Object.assign(currentMonth);
 buildMonth(displayedMonth);
 setDate();
-
-
-monthLabel.textContent = months[today.getMonth()] + " " + today.getFullYear();
 
 function monthYear(numMonthIni, yearIni) {
     //var monthObject = new Date(year, numMonth);
@@ -99,11 +98,8 @@ function setDate() {
 }
 // populate calendar days
 function buildMonth(month) {
-
     clearCalendar();
-
     monthLabel.textContent = month.getMonthName() + " " + month.getYear();
-
     var numCells = month.daysInMonth();
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
@@ -112,9 +108,7 @@ function buildMonth(month) {
     if (month.getNumMonth() === today.getMonth() && month.getYear() === today.getFullYear()) {
         dayInMonth = today.getDate();
     }
-
     //Empty cells if month starts at different day than sunday
-
     for (let i = 0; i < month.firstDayMonthWeekDay(); i++)
         appendBlankCell();
 
@@ -123,17 +117,15 @@ function buildMonth(month) {
             day = createDayContainer(i);
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
+            eventContainer.classList.add("day-" + (i + 1));
             for (event of monthStored[i]) {
-                newElement = displayEvent(event)
-                eventContainer.appendChild(newElement);
+                eventContainer.appendChild(displayEvent(event));
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
-
             }
             day.appendChild(eventContainer);
             calendarContainer.appendChild(day);
         }
     } else {
-
         for (let i = 0; i < numCells; i++) {
             day = createDayContainer(i);
             calendarContainer.appendChild(day);
@@ -151,23 +143,21 @@ function buildMonth(month) {
     function createDayContainer(n) {
         n++;
         let day = document.createElement("div");
-        day.innerHTML = "<br><span class = 'cell'>" + n + "</span>";
+        day.classList.add("cell");
+        day.innerHTML = "<br><span>" + n + "</span>";
         if (n === dayInMonth && dayInMonth) {
             day.classList.add("today-cell");
         }
-        return day
-
+        return day;
     }
+}
 
-    function displayEvent(event) {
-        newElement = document.createElement("span");
-        newElement.textContent = event.title;
-        newElement.classList.add("default-event");
-        newElement.classList.add(event.eventType);
-        console.log(event.eventType);
-        return newElement;
-    }
-
+function displayEvent(event) {
+    newElement = document.createElement("span");
+    newElement.textContent = event.title;
+    newElement.classList.add("default-event");
+    newElement.classList.add(event.eventType);
+    return newElement;
 }
 
 
@@ -191,13 +181,13 @@ function nextMonth() {
     buildMonth(displayedMonth);
 }
 
-
+/* back to current month if current date is clicked*/
 function backToCurrentMonth() {
 
     today = new Date();
     currentMonth = monthYear(today.getMonth(), today.getFullYear());
+    setDate();
 
-    console.log("backcurrentmonth pressed");
     if (!(displayedMonth.getNumMonth() === today.getMonth() && displayedMonth.getYear() === today.getFullYear())) {
         displayedMonth = Object.assign(currentMonth);
         console.log("builidng month")
@@ -234,8 +224,6 @@ function handleKeyDown(event) {
 Form, validation function
 --------------------------
 */
-hasEndDate.addEventListener("click", toggleEndDate);
-remindExpire.addEventListener("click", toggleExpire);
 
 function submitEvent() {
 
@@ -249,29 +237,37 @@ function submitEvent() {
         infoWindow.textContent = "Event successfully created!!"
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
+        var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
+        console.log(eventWrapper)
+        eventWrapper.appendChild(displayEvent(newEvent));
+        eventWrapper.insertAdjacentHTML('beforeend', '<br>');
     }
 
-    //console.log(name);
-    let month = JSON.parse(localStorage.getItem(name));
-    console.log("name", name);
-    console.log("object", month);
-    // console.log("object from local storage without being parsed", localStorage.getItem(name));
-    // console.log("retrieved object from local storage :", month);
+    //let month = JSON.parse(localStorage.getItem(name));
+
+
 
 }
 
+
+/* create event */
+
 function createEvent() {
-    currentEventType = inputEvent.value ? inputEvent.value : "event-other";
-    titleEvent = inputTitle.value;
+    var currentEventType = inputEvent.value ? inputEvent.value : "event-other";
+    var titleEvent = inputTitle.value;
+    var descriptionEvent = inputEventDescription.value;
+
     return {
         title: titleEvent.trim(),
         dateIni: new Date(inputDateIni.value),
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
         timeReminder: timerRemind.value,
-        description: inputEventDescription.value,
+        description: descriptionEvent.trim(),
         eventType: currentEventType
     }
 }
+
+
 
 function monthNameEvent(event) {
     let monthNum = event.dateIni.getMonth();
@@ -288,10 +284,12 @@ function getMonthObject(name, event) {
         let lengthMonth = getDaysInMonth(monthNum, year);
         month = populateMonth(lengthMonth);
     }
-
     month[day - 1].push(event);
     return month;
 }
+
+
+/* validate form*/
 
 function validate() {
     let validation = true;
@@ -347,9 +345,8 @@ function validate() {
             validation = false;
         }
     }
-    return validation;
+    return validation; // true if validation passed, else false
 }
-
 
 
 /*--------------------------------------
