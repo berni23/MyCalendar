@@ -6,9 +6,9 @@
 }
 
 body {
+    position: relative;
     text-align: center;
     padding: 0em;
-    font-family: 'headerFont';
     max-width: 1700px;
     margin: 0;
     align-items: center;
@@ -16,6 +16,11 @@ body {
 
 ul {
     list-style-type: none;
+}
+
+button {
+
+    cursor: pointer;
 }
 
 .title {
@@ -92,10 +97,10 @@ main {
     color: black;
 }
 
-/*.calendar-container>div:nth-child(7n) {
+.calendar-container>div:nth-child(7n) {
 
     border-right: 1px solid black;
-}*/
+}
 
 .cell {
     font-size: 20px;
@@ -106,6 +111,7 @@ main {
     font-size: 4em;
     /* margin-left: 100px;*/
     /* color: var(--color-primary);*/
+    cursor: pointer;
     color: goldenrod;
 }
 
@@ -127,7 +133,6 @@ main {
     display: flex;
 }
 
-
 .previous,
 .next {
     position: relative;
@@ -138,6 +143,7 @@ main {
     margin: auto;
     text-align: center;
     padding: 5px;
+    cursor: pointer;
 
 }
 
@@ -236,7 +242,27 @@ main {
     background-color: darkgray;
 }
 
-.show-modal {
+.info-window {
+
+    position: fixed;
+    top: 40%;
+    left: 40%;
+    padding: 15px;
+    font-size: 20px;
+    background-color: whitesmoke;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 0 0 5px black;
+    /*z-index: 10;
+    /*visibility: hidden;*/
+    transform: scale(1.1);
+    opacity: 0;
+    transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
+
+}
+
+.show-modal,
+.show-info {
     opacity: 1;
     visibility: visible;
     transform: scale(1.0);
@@ -332,6 +358,11 @@ main {
     font-size: 15px;
 }
 
+.event-wrapper {
+
+    width: 100%;
+}
+
 .Meeting {
 
     background-color: blue;
@@ -359,6 +390,9 @@ main {
 
     background-color: red;
 }
+
+
+
 
 .hidden {
     display: none !important;
@@ -399,9 +433,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     .calendar-container>div {
         width: 115px;
     }
-
 }
-
 
 @media (max-width: 850px) {
 
@@ -419,8 +451,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     }
 
 }
-
-
 
 @media (max-width: 600px) {
 
@@ -443,7 +473,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 140px;
         display: flex
     }
-
 }
 
 @media (max-width: 500px) {
@@ -461,7 +490,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     }
 }
 
-
 @media (max-height: 550px) {
 
     .calendar-container>div {
@@ -478,8 +506,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     .main-header {
         display: none;
     }
-
-
 }
 
 @media (max-height: 350px) {

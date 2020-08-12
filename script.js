@@ -21,22 +21,29 @@ var inputEvent = document.getElementById("event-type");
 var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
 var monthLabel = document.querySelector(".month-year");
-
+var infoWindow = document.querySelector(".info-window");
 var btnPrevious = document.querySelector(".previous");
 var btnNext = document.querySelector(".next");
+var modal = document.querySelector(".modal");
+var closeButton = document.querySelector(".close-button");
+
 
 btnCreateEvent.addEventListener("click", submitEvent);
+btnCancelEvent.addEventListener("click", toggleModal);
 btnPrevious.addEventListener("click", previousMonth);
 btnNext.addEventListener("click", nextMonth);
+btnModal.addEventListener("click", toggleModal);
+closeButton.addEventListener("click", toggleModal);
+window.addEventListener("click", windowOnClick);
+document.addEventListener('keydown', handleKeyDown);
+todaySpan.addEventListener("click", backToCurrentMonth)
 
 var today = new Date();
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = Object.assign(currentMonth);
-buildMonth(currentMonth)
+buildMonth(displayedMonth);
 setDate();
 
-
-localStorage.clear();
 
 monthLabel.textContent = months[today.getMonth()] + " " + today.getFullYear();
 
@@ -83,6 +90,8 @@ function monthYear(numMonthIni, yearIni) {
     }
 }
 
+// set current date
+
 function setDate() {
     let d = new Date();
     todaySpan.textContent = daysWeekShort[d.getDay()] + ", " + d.getDate() + " " + monthsShort[d.getMonth()];
@@ -91,16 +100,18 @@ function setDate() {
 // populate calendar days
 function buildMonth(month) {
 
-    //dayInMonth only provided if we want to build the current month
+    clearCalendar();
+
+    monthLabel.textContent = month.getMonthName() + " " + month.getYear();
+
     var numCells = month.daysInMonth();
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
     var dayInMonth;
 
-    if (month.getNumMonth() == today.getMonth() && month.getYear() == today.getFullYear()) {
+    if (month.getNumMonth() === today.getMonth() && month.getYear() === today.getFullYear()) {
         dayInMonth = today.getDate();
     }
-
 
     //Empty cells if month starts at different day than sunday
 
@@ -155,48 +166,55 @@ function buildMonth(month) {
         newElement.classList.add(event.eventType);
         console.log(event.eventType);
         return newElement;
-
     }
 
 }
+
+
+/* clear calendar content*/
 
 function clearCalendar() {
     calendarContainer.textContent = "";
 }
 
+
+/* navigate through months*/
+
 function previousMonth() {
-    clearCalendar();
     displayedMonth.addMonth(-1);
     buildMonth(displayedMonth);
-    monthLabel.textContent = displayedMonth.getMonthName() + " " + displayedMonth.getYear();
+
 }
 
 function nextMonth() {
-    clearCalendar();
     displayedMonth.addMonth(1);
     buildMonth(displayedMonth);
-    monthLabel.textContent = displayedMonth.getMonthName() + " " + displayedMonth.getYear();
 }
 
-/*--------------------------------------
-useful functions
-------------------------------------*/
 
-function getDaysInMonth(numMonth, year) {
-    //Day 0 is the last day in the previous month
-    return new Date(year, numMonth + 1, 0).getDate()
+function backToCurrentMonth() {
+
+    today = new Date();
+    currentMonth = monthYear(today.getMonth(), today.getFullYear());
+
+    console.log("backcurrentmonth pressed");
+    if (!(displayedMonth.getNumMonth() === today.getMonth() && displayedMonth.getYear() === today.getFullYear())) {
+        displayedMonth = Object.assign(currentMonth);
+        console.log("builidng month")
+        buildMonth(displayedMonth);
+    }
 }
 
-function firstDayMonth(month, year) {
-    return new Date(year, month, 1).getDay();
-}
+
 /* modal  logic */
-
-var modal = document.querySelector(".modal");
-var closeButton = document.querySelector(".close-button");
 
 function toggleModal() {
     modal.classList.toggle("show-modal");
+}
+
+function toggleInfoWindow() {
+
+    infoWindow.classList.toggle("show-info");
 }
 
 function windowOnClick(event) {
@@ -204,10 +222,7 @@ function windowOnClick(event) {
         modal.classList.toggle("show-modal");
     }
 }
-btnModal.addEventListener("click", toggleModal);
-closeButton.addEventListener("click", toggleModal);
-window.addEventListener("click", windowOnClick);
-document.addEventListener('keydown', handleKeyDown);
+
 
 function handleKeyDown(event) {
     if (event.keyCode === 27) { // hide modal on esc key pressed
@@ -230,17 +245,18 @@ function submitEvent() {
         var name = monthNameEvent(newEvent);
         var monthArray = getMonthObject(name, newEvent);
         localStorage.setItem(name, JSON.stringify(monthArray));
+        toggleModal();
+        infoWindow.textContent = "Event successfully created!!"
+        toggleInfoWindow();
+        setTimeout(toggleInfoWindow, 1500);
     }
 
     //console.log(name);
     let month = JSON.parse(localStorage.getItem(name));
-
     console.log("name", name);
     console.log("object", month);
-
     // console.log("object from local storage without being parsed", localStorage.getItem(name));
     // console.log("retrieved object from local storage :", month);
-
 
 }
 
@@ -334,8 +350,19 @@ function validate() {
     return validation;
 }
 
-// UTILS
 
+
+/*--------------------------------------
+            UTILS
+------------------------------------*/
+function getDaysInMonth(numMonth, year) {
+    //Day 0 is the last day in the previous month
+    return new Date(year, numMonth + 1, 0).getDate()
+}
+
+function firstDayMonth(month, year) {
+    return new Date(year, month, 1).getDay();
+}
 
 function toggleEndDate() {
     inputDateEnd.parentElement.classList.toggle("hidden");
