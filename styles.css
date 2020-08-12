@@ -92,10 +92,10 @@ main {
     color: black;
 }
 
-.calendar-container>div:nth-child(7n) {
+/*.calendar-container>div:nth-child(7n) {
 
     border-right: 1px solid black;
-}
+}*/
 
 .cell {
     font-size: 20px;
@@ -396,11 +396,31 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         justify-content: space-between;
     }
 
-    /* .calendar-container>div {
+    .calendar-container>div {
         width: 115px;
     }
-    */
+
 }
+
+
+@media (max-width: 850px) {
+
+    main {
+        width: 650px;
+    }
+
+    .string-days>span {
+        text-align: center;
+        justify-content: space-between;
+    }
+
+    .calendar-container>div {
+        width: 90px;
+    }
+
+}
+
+
 
 @media (max-width: 600px) {
 

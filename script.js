@@ -32,8 +32,11 @@ btnNext.addEventListener("click", nextMonth);
 var today = new Date();
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = Object.assign(currentMonth);
-buildMonth(currentMonth, today.getDate())
+buildMonth(currentMonth)
 setDate();
+
+
+localStorage.clear();
 
 monthLabel.textContent = months[today.getMonth()] + " " + today.getFullYear();
 
@@ -86,16 +89,19 @@ function setDate() {
     todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 }
 // populate calendar days
-function buildMonth(month, dayInMonth) {
+function buildMonth(month) {
 
     //dayInMonth only provided if we want to build the current month
     var numCells = month.daysInMonth();
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
-
-    console.log(month.getMonthYear());
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
+    var dayInMonth;
 
-    console.log("month stored", monthStored);
+    if (month.getNumMonth() == today.getMonth() && month.getYear() == today.getFullYear()) {
+        dayInMonth = today.getDate();
+    }
+
+
     //Empty cells if month starts at different day than sunday
 
     for (let i = 0; i < month.firstDayMonthWeekDay(); i++)
@@ -104,11 +110,9 @@ function buildMonth(month, dayInMonth) {
     if (monthStored) {
         for (let i = 0; i < numCells; i++) {
             day = createDayContainer(i);
-
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
             for (event of monthStored[i]) {
-
                 newElement = displayEvent(event)
                 eventContainer.appendChild(newElement);
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
@@ -149,7 +153,6 @@ function buildMonth(month, dayInMonth) {
         newElement.textContent = event.title;
         newElement.classList.add("default-event");
         newElement.classList.add(event.eventType);
-
         console.log(event.eventType);
         return newElement;
 
