@@ -28,6 +28,8 @@ var btnPrevious = document.querySelector(".previous");
 var btnNext = document.querySelector(".next");
 var modal = document.querySelector(".modal");
 var closeButton = document.querySelector(".close-button");
+var eventExpired = document.querySelector(".event-expired");
+var listExpired = document.getElementById("list-expired");
 
 btnCreateEvent.addEventListener("click", submitEvent);
 btnCancelEvent.addEventListener("click", toggleModal);
@@ -41,101 +43,144 @@ todaySpan.addEventListener("click", backToCurrentMonth)
 hasEndDate.addEventListener("click", toggleEndDate);
 remindExpire.addEventListener("click", toggleExpire);
 
-var today;
-var currentMonth;
-var displayedMonth;
-var timerCheckEvents;
-var monthStored; // current month being displayed and retrieved from local storage
+var today = new Date();
 var todayStored; // today's array of events retrieved from local storage
+var currentMonth = monthYear(today.getMonth(), today.getFullYear());
+var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
+var timerCheckEvents;
 
 initializeCalendar();
 
 function initializeCalendar() {
 
-    updateToday();
-    displayedMonth = Object.assign(currentMonth);
+    setDate(today);
     buildMonth(displayedMonth);
-    setDate();
-    checkEvents();
-    // timerCheckEvents = setInterval(checkEvents, 5000) // check current events and unpdate "today"
+    // checkEventsMonth(getMonthStored(currentMonth));
+    timerCheckEvents = setInterval(updateToday, 30000);
+    // check current events and unpdate "today"
 
 }
 
 function updateToday() {
+    newToday = new Date();
+    checkEvents(newToday);
 
-    today = new Date();
-    currentMonth = monthYear(today.getMonth(), today.getFullYear());
-    todayStored = JSON.parse(localStorage.getItem(currentMonth.getMonthYear()))[today.getDate() - 1];
-
-    // console.log(todayStored.length)
-    setDate();
+    if (newToday.getDate() != today.getDate()) {
+        setDate(newToday);
+        if (newToday.getMonth() != today.getMonth()) {
+            currentMonth = monthYear(newToday.getMonth(), newToday.getFullYear());
+            updateCurrentMonth(newToday);
+        }
+        today = newToday;
+    }
 }
 
-function checkEvents() {
+/*localStorage.setItem(currentMonth.getMonthYear(), JSON.stringify(currentMonthStored))*/
 
-    updateToday();
-    var todayEvents = document.querySelectorAll(".day-" + today.getDate() + ">span")
-    console.log(todayEvents.length);
-    console.log(todayStored.length);
-    for (let i = 0; i < todayEvents.length; i++) {
+function getMonthStored(month) {
+    var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
+    if (!monthStored) {
+        monthStored = populateMonth(month.daysInMonth());
+    }
+    return monthStored;
+
+}
+
+function saveMonth(month, name) {
+    localStorage.setItem(name, JSON.stringify(month));
+}
+
+function checkEventsMonth(monthStored) {
+    var windoWarning = false;
+
+    for (let i = 0; i < today.getDate(); i++) {
+
+        var numDay = i + 1;
+        var todayEvents = document.querySelectorAll(".day-" + numDay + ">span");
+        for (let j = 0; j < monthStored[i].length; j++) {
+            var date = new Date(monthStored[i][j].dateIni);
+            if (date.getTime() > today.getTime() && !monthStored[i][j].completed && !todayStored[i].warning) {
+                monthStored[i][j].warning = true;
+                addWarning(monthStored[i][j]); // only adding the warning to the html
+
+                todayEvents[j].classList.add("event-warning");
+                windoWarning = true;
+                monthStored[i][j].warning = true;
+                addWarning(monthStored[i][j]);
+            }
+        }
+    }
+    if (windoWarning) {
+        showWarning()
+        saveMonth(monthStored);
+    }
+}
+
+function checkEvents(currentDay) {
+    var windoWarning = false;
+    var dayNum = currentDay.getDate();
+    var todayEvents = document.querySelectorAll(".day-" + dayNum + ">span");
+    var monthUpdated = getMonthStored(currentMonth);
+    todayStored = monthUpdated[today.getDate() - 1];
+
+    for (let i = 0; i < todayStored.length; i++) {
         let date = new Date(todayStored[i].dateIni);
-        if (!todayStored[i].completed && today > date) {
-            todayEvents[i].classList.add("event-warning");
-            console.log(" warning");
+        if (!todayStored[i].completed && currentDay > date && !todayStored[i].warning) {
+            todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
+            windoWarning = true;
+            todayStored[i].warning = true;
+            addWarning(todayStored[i]);
             // display warning, display event in red
         }
     }
-
-}
-
-
-
-function monthYear(numMonthIni, yearIni) {
-    //var monthObject = new Date(year, numMonth);
-    var monthName = months[numMonthIni];
-    var year = yearIni;
-    var numMonth = numMonthIni;
-    return {
-        //    monthObject,
-        getMonthYear() {
-
-            return monthName + year;
-        },
-        getMonthName() {
-
-            return monthName;
-        },
-        getNumMonth() {
-
-            return numMonth;
-        },
-        getYear() {
-
-            return year;
-        },
-        daysInMonth() {
-            return getDaysInMonth(numMonth, year);
-        },
-        firstDayMonthWeekDay() {
-            return firstDayMonth(numMonth, year);
-        },
-        toIso() {
-            return d.toISOString();
-
-        },
-        addMonth(n) {
-            let d = new Date(year, numMonth);
-            d.setMonth(d.getMonth() + n);
-            year = d.getFullYear();
-            numMonth = d.getMonth();
-            monthName = months[d.getMonth()];
-        }
+    console.log(todayStored);
+    if (windoWarning) {
+        showWarning();
+        monthUpdated[dayNum - 1] = todayStored;
+        //console.log(monthUpdated);
+        saveMonth(monthUpdated, currentMonth.getMonthYear());
     }
 }
 
+function addWarning(event) {
+
+    listExpired.insertAdjacentHTML("afterbegin", '<li id =warning-' + event.id + '><span>' + event.title + '</span> <input type = "checkbox" class = "checkbox-warning" ><br><li>')
+
+}
+
+function monthYear(numMonthIni, yearIni) {
+    var monthObject = new Date(yearIni, numMonthIni);
+
+    return {
+        //   monthObject,
+        getMonthYear() {
+            return months[monthObject.getMonth()] + monthObject.getFullYear();
+        },
+        getMonthName() {
+            return months[monthObject.getMonth()];
+        },
+        getNumMonth() {
+            return monthObject.getMonth();
+        },
+        getYear() {
+            return monthObject.getFullYear();
+        },
+        daysInMonth() {
+            return getDaysInMonth(monthObject.getMonth(), monthObject.getFullYear());
+        },
+        firstDayMonthWeekDay() {
+            return firstDayMonth(monthObject.getMonth(), monthObject.getFullYear());
+        },
+        toIso() {
+            return d.toISOString();
+        },
+        addMonth(n) {
+            monthObject.setMonth(monthObject.getMonth() + n);
+        }
+    }
+}
 // set current date
-function setDate() {
-    let d = new Date();
+function setDate(d) {
     todaySpan.textContent = daysWeekShort[d.getDay()] + ", " + d.getDate() + " " + monthsShort[d.getMonth()];
     todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 }
@@ -145,22 +190,24 @@ function buildMonth(month) {
     monthLabel.textContent = month.getMonthName() + " " + month.getYear();
     var numCells = month.daysInMonth();
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
-    monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
+    var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
     var dayInMonth;
 
-    if (month.getNumMonth() === today.getMonth() && month.getYear() === today.getFullYear()) {
+    console.log(currentMonth.getMonthYear())
+    console.log(month.getMonthYear())
+    if (currentMonth.getMonthYear() === month.getMonthYear()) {
         dayInMonth = today.getDate();
     }
     //Empty cells if month starts at different day than sunday
     for (let i = 0; i < month.firstDayMonthWeekDay(); i++)
         appendBlankCell();
-
     if (monthStored) {
         for (let i = 0; i < numCells; i++) {
             day = createDayContainer(i);
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
             eventContainer.classList.add("day-" + (i + 1));
+            console.log("day-" + (i + 1));
             for (event of monthStored[i]) {
                 eventContainer.appendChild(displayEvent(event));
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
@@ -172,6 +219,11 @@ function buildMonth(month) {
         for (let i = 0; i < numCells; i++) {
             day = createDayContainer(i);
             calendarContainer.appendChild(day);
+            var eventContainer = document.createElement("div");
+            eventContainer.classList.add("event-wrapper");
+            eventContainer.classList.add("day-" + (i + 1));
+            day.appendChild(eventContainer);
+            calendarContainer.appendChild(day);
         }
     }
     for (let i = 0; i < cellsLeft; i++)
@@ -179,6 +231,7 @@ function buildMonth(month) {
 
     function appendBlankCell() {
         let blankCell = document.createElement("div");
+        blankCell.classList.add("empty-cell");
         blankCell.innerHTML = "<span><br></span>";
         calendarContainer.appendChild(blankCell);
     }
@@ -199,15 +252,13 @@ function displayEvent(event) {
     newElement = document.createElement("span");
     newElement.textContent = event.title;
     newElement.classList.add("default-event");
+    newElement.id = String(event.id);
     newElement.classList.add(event.eventType);
+    if (event.warning) {
+        newElement.classList.add("event-warning");
+        console.log("warning");
+    }
     return newElement;
-}
-
-
-/* clear calendar content*/
-
-function clearCalendar() {
-    calendarContainer.textContent = "";
 }
 
 
@@ -215,48 +266,27 @@ function clearCalendar() {
 
 function previousMonth() {
     displayedMonth.addMonth(-1);
-    buildMonth(displayedMonth);
 
+    buildMonth(displayedMonth);
 }
 
 function nextMonth() {
     displayedMonth.addMonth(1);
     buildMonth(displayedMonth);
 }
-
 /* back to current month if current date is clicked*/
 function backToCurrentMonth() {
-
-    if (!(displayedMonth.getNumMonth() === today.getMonth() && displayedMonth.getYear() === today.getFullYear())) {
-        displayedMonth = Object.assign(currentMonth);
+    if (!(currentMonth.getMonthYear() === displayedMonth.getMonthYear())) {
+        displayedMonth = monthYear(today.getMonth(), today.getFullYear());
         buildMonth(displayedMonth);
     }
 }
 
-
-/* modal  logic */
-
-function toggleModal() {
-    modal.classList.toggle("show-modal");
+function handleWarning() {
+    var warningEvents = document.querySelectorAll(" .event-expired li");
+    for (let i = 0; i < warningEvents.length; i++) {}
 }
 
-function toggleInfoWindow() {
-
-    infoWindow.classList.toggle("show-info");
-}
-
-function windowOnClick(event) {
-    if (event.target === modal) {
-        modal.classList.toggle("show-modal");
-    }
-}
-
-
-function handleKeyDown(event) {
-    if (event.keyCode === 27) { // hide modal on esc key pressed
-        modal.classList.remove("show-modal");
-    }
-}
 /*
 -------------------------
 Form, validation function
@@ -264,8 +294,6 @@ Form, validation function
 */
 
 function submitEvent() {
-
-    // localStorage.clear();
     if (validate()) {
         var newEvent = createEvent();
         var name = monthNameEvent(newEvent);
@@ -275,35 +303,40 @@ function submitEvent() {
         infoWindow.textContent = "Event successfully created!!"
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
-        var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
-        eventWrapper.appendChild(displayEvent(newEvent));
-        eventWrapper.insertAdjacentHTML('beforeend', '<br>');
+        console.log(newEvent.dateIni.getDate());
+
+        if (name == currentMonth.getMonthYear()) {
+
+            var days = document.querys
+            var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
+            console.log(eventWrapper);
+            eventWrapper.appendChild(displayEvent(newEvent));
+            eventWrapper.insertAdjacentHTML('beforeend', '<br>');
+        }
         clearForm();
     }
 
     //let month = JSON.parse(localStorage.getItem(name));
-
-
 }
 
 /* create event */
-
 function createEvent() {
     var currentEventType = inputEvent.value ? inputEvent.value : "event-other";
     var titleEvent = inputTitle.value;
     var descriptionEvent = inputEventDescription.value;
-
+    var eventId = idEvent();
     return {
+        id: eventId,
         title: titleEvent.trim(),
         dateIni: new Date(inputDateIni.value),
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
         timeReminder: timerRemind.value,
         description: descriptionEvent.trim(),
         eventType: currentEventType,
-        completed: false
+        completed: false,
+        warning: false
     }
 }
-
 
 
 function monthNameEvent(event) {
@@ -318,12 +351,14 @@ function getMonthObject(name, event) {
     let day = event.dateIni.getDate();
 
     if (!month) {
-        let lengthMonth = getDaysInMonth(monthNum, year);
-        month = populateMonth(lengthMonth);
+        month = populateMonth(getDaysInMonth(monthNum, year));
     }
     month[day - 1].push(event);
     return month;
 }
+
+
+
 
 /* validate form*/
 
@@ -385,18 +420,70 @@ function validate() {
 }
 
 
-function clearForm() {
 
+
+/* clear functions*/
+
+
+function clearCalendar() {
+    calendarContainer.textContent = "";
+}
+
+function clearForm() {
 
     inputTitle.value = "";
     timerRemind.value = "";
 
 }
 
+function clearErrors() {
+    var errorMsg = document.querySelectorAll(".error-msg");
+    var errorInput = document.querySelectorAll(".error-input");
+    for (div of errorMsg) {
+        div.remove();
+    }
+    for (div of errorInput) {
+        div.classList.remove("error-input")
+    }
+}
+
 
 /*--------------------------------------
             UTILS
 ------------------------------------*/
+
+/* modal  logic */
+
+function toggleModal() {
+    modal.classList.toggle("show-modal");
+}
+
+function toggleInfoWindow() {
+    infoWindow.classList.toggle("show-info");
+}
+
+function showWarning() {
+
+    eventExpired.classList.add("show-info");
+}
+
+function hideWarning() {
+
+    eventExpired.classList.remove("show-info");
+}
+
+function windowOnClick(event) {
+    if (event.target === modal) {
+        modal.classList.toggle("show-modal");
+    }
+}
+
+function handleKeyDown(event) {
+    if (event.keyCode === 27) { // hide modal on esc key pressed
+        modal.classList.remove("show-modal");
+    }
+}
+
 function getDaysInMonth(numMonth, year) {
     //Day 0 is the last day in the previous month
     return new Date(year, numMonth + 1, 0).getDate()
@@ -414,16 +501,10 @@ function toggleExpire() {
     timerRemind.parentElement.classList.toggle("hidden");
 }
 
-function clearErrors() {
-    var errorMsg = document.querySelectorAll(".error-msg");
-    var errorInput = document.querySelectorAll(".error-input");
-    for (div of errorMsg) {
-        div.remove();
-    }
-    for (div of errorInput) {
-        div.classList.remove("error-input")
-    }
+function idEvent() {
+    return Math.floor(Math.random() * Math.floor(10000000)); // 1 in ten millions
 }
+
 
 function parseIsoString(s) {
     var b = s.split(/\D+/);

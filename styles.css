@@ -249,7 +249,8 @@ main {
     background-color: darkgray;
 }
 
-.info-window {
+.info-window,
+.event-expired {
 
     position: fixed;
     top: 40%;
@@ -265,6 +266,39 @@ main {
     transform: scale(1.1);
     opacity: 0;
     transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
+    z-index: 2;
+
+}
+
+.info-window {
+
+    top: 40%;
+    left: 40%;
+}
+
+.event-expired {
+    top: 20%;
+    left: 7%
+}
+
+.event-expired ul {
+
+    margin-right: 120px;
+
+}
+
+.event-expired>p {
+
+    text-align: left;
+    margin-left: 40px;
+
+}
+
+.event-expired ul li {
+
+    display: flex;
+    margin: 0;
+    padding: 5px 0;
 
 }
 
@@ -274,6 +308,11 @@ main {
     visibility: visible;
     transform: scale(1.0);
     transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.checkbox-warning {
+
+    margin: 5px 0 0 25px;
 }
 
 .button-form {
@@ -295,8 +334,6 @@ main {
     position: relative;
 }
 
-
-
 .modal-form label {
     margin: 5px;
 }
@@ -308,7 +345,6 @@ main {
 }
 
 .modal-form ul {
-
     margin: 0px;
 }
 
@@ -325,15 +361,12 @@ main {
     text-align: start;
 }
 
-
 .error-input {
     color: red;
     border: 2px solid red;
 }
 
-
 .error-msg {
-
     height: 1.3rem;
     padding: 1px 5px;
     font-size: 15px;
@@ -346,14 +379,11 @@ main {
     vertical-align: baseline;
 }
 
-
 .error-msg p {
     /* padding-top: 0.4rem;
     padding-left: 0.2rem;
     */
     margin: auto;
-
-
 }
 
 /* event styles depending on event type chosen */
@@ -365,7 +395,6 @@ main {
     font-size: 15px;
     z-index: 2;
 }
-
 
 .event-wrapper {
 
