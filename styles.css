@@ -363,7 +363,9 @@ main {
     border-radius: 10px;
     padding: 3px;
     font-size: 15px;
+    z-index: 2;
 }
+
 
 .event-wrapper {
 
@@ -372,7 +374,7 @@ main {
 
 .Meeting {
 
-    background-color: blue;
+    background-color: bl;
 
 }
 
@@ -395,8 +397,17 @@ main {
 
 .Reminder {
 
-    background-color: red;
+    background-color: rbga(128, 0, 128, 0.5);
 }
+
+.event-warning {
+
+    background-color: red;
+
+
+}
+
+
 
 
 
@@ -408,6 +419,25 @@ main {
 /* responsiveness
 
 TO DO : HIDE EVENTS  in the responsive media queries!! */
+
+
+@media (max-width: 1600px) {
+
+    main {
+
+        width: 1500px;
+    }
+
+    .string-days>span {
+        text-align: center;
+        justify-content: space-between;
+    }
+
+    .calendar-container>div {
+        width: 203px;
+    }
+
+}
 
 @media (max-width: 1400px) {
 
