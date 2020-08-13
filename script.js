@@ -55,7 +55,7 @@ function initializeCalendar() {
 
     setDate(today);
     buildMonth(displayedMonth);
-    // checkEventsMonth(getMonthStored(currentMonth));
+    checkEventsMonth(getMonthStored(currentMonth));
     timerCheckEvents = setInterval(updateToday, 30000);
     // check current events and unpdate "today"
 
@@ -99,14 +99,12 @@ function checkEventsMonth(monthStored) {
         var todayEvents = document.querySelectorAll(".day-" + numDay + ">span");
         for (let j = 0; j < monthStored[i].length; j++) {
             var date = new Date(monthStored[i][j].dateIni);
-            if (date.getTime() > today.getTime() && !monthStored[i][j].completed && !todayStored[i].warning) {
+            if (date.getTime() < today.getTime() && !monthStored[i][j].completed) {
                 monthStored[i][j].warning = true;
-                addWarning(monthStored[i][j]); // only adding the warning to the html
+                addWarning(monthStored[i][j], date); // only adding the warning to the html
 
                 todayEvents[j].classList.add("event-warning");
                 windoWarning = true;
-                monthStored[i][j].warning = true;
-                addWarning(monthStored[i][j]);
             }
         }
     }
@@ -129,11 +127,11 @@ function checkEvents(currentDay) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
             todayStored[i].warning = true;
-            addWarning(todayStored[i]);
+            addWarning(todayStored[i], date);
             // display warning, display event in red
         }
     }
-    console.log(todayStored);
+
     if (windoWarning) {
         showWarning();
         monthUpdated[dayNum - 1] = todayStored;
@@ -142,9 +140,43 @@ function checkEvents(currentDay) {
     }
 }
 
-function addWarning(event) {
+function addWarning(event, date) {
 
-    listExpired.insertAdjacentHTML("afterbegin", '<li id =warning-' + event.id + '><span>' + event.title + '</span> <input type = "checkbox" class = "checkbox-warning" ><br><li>')
+
+
+    //console.log(date.getMonth())
+    var monthYear = months[date.getMonth()] + date.getFullYear();
+    var day = date.getDate();
+    listExpired.insertAdjacentHTML("afterbegin", `<li ><span>${event.title}</span> <input id = warning-${event.id} data-id =${event.id}
+    data-montYear=${monthYear} data-day=${day} type = "checkbox" class ="checkbox-warning"><br></li> `);
+    document.getElementById(`warning-${event.id}`).addEventListener("click", removeWarning);
+}
+
+function removeWarning(event) {
+
+
+
+    if (event.target.checked) {
+
+
+        var id = event.target.dataset.id;
+        console.log(id);
+
+        document.getElementById(id).classList.remove("event-warning");
+        var monthYear = event.target.dataset.monthYear;
+
+
+        var day = event.target.dataset.day;
+        var arrayMonth = JSON.parse(localStorage.getItem(monthYear));
+        var updateWarning = arrayMonth[day - 1];
+        updateWarning.warning = false;
+        updateWarning.completed = true;
+        arrayMonth[day - 1] = updateWarning;
+        localStorage.setItem(monthYear, JSON.stringify(arrayMonth));
+
+        document.getElementById(event.target.id).parentElement.remove();
+    }
+
 
 }
 
@@ -185,6 +217,7 @@ function setDate(d) {
     todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 }
 // populate calendar days
+
 function buildMonth(month) {
     clearCalendar();
     monthLabel.textContent = month.getMonthName() + " " + month.getYear();
@@ -193,8 +226,6 @@ function buildMonth(month) {
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
     var dayInMonth;
 
-    console.log(currentMonth.getMonthYear())
-    console.log(month.getMonthYear())
     if (currentMonth.getMonthYear() === month.getMonthYear()) {
         dayInMonth = today.getDate();
     }
@@ -207,7 +238,6 @@ function buildMonth(month) {
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
             eventContainer.classList.add("day-" + (i + 1));
-            console.log("day-" + (i + 1));
             for (event of monthStored[i]) {
                 eventContainer.appendChild(displayEvent(event));
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
@@ -256,7 +286,6 @@ function displayEvent(event) {
     newElement.classList.add(event.eventType);
     if (event.warning) {
         newElement.classList.add("event-warning");
-        console.log("warning");
     }
     return newElement;
 }
@@ -303,13 +332,10 @@ function submitEvent() {
         infoWindow.textContent = "Event successfully created!!"
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
-        console.log(newEvent.dateIni.getDate());
 
         if (name == currentMonth.getMonthYear()) {
 
-            var days = document.querys
             var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
-            console.log(eventWrapper);
             eventWrapper.appendChild(displayEvent(newEvent));
             eventWrapper.insertAdjacentHTML('beforeend', '<br>');
         }
