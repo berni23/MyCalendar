@@ -148,7 +148,7 @@ function addWarning(event, date) {
     var monthYear = months[date.getMonth()] + date.getFullYear();
     var day = date.getDate();
     listExpired.insertAdjacentHTML("afterbegin", `<li ><span>${event.title}</span> <input id = warning-${event.id} data-id =${event.id}
-    data-montYear=${monthYear} data-day=${day} type = "checkbox" class ="checkbox-warning"><br></li> `);
+    data-monthyear=${monthYear} data-day=${day} type = "checkbox" class ="checkbox-warning"><br></li> `);
     document.getElementById(`warning-${event.id}`).addEventListener("click", removeWarning);
 }
 
@@ -160,24 +160,34 @@ function removeWarning(event) {
 
 
         var id = event.target.dataset.id;
-        console.log(id);
 
         document.getElementById(id).classList.remove("event-warning");
-        var monthYear = event.target.dataset.monthYear;
+        var nameMonth = event.target.dataset.monthyear;
 
+        console.log(event.target);
 
         var day = event.target.dataset.day;
-        var arrayMonth = JSON.parse(localStorage.getItem(monthYear));
-        var updateWarning = arrayMonth[day - 1];
-        updateWarning.warning = false;
-        updateWarning.completed = true;
-        arrayMonth[day - 1] = updateWarning;
-        localStorage.setItem(monthYear, JSON.stringify(arrayMonth));
+        var arrayMonth = JSON.parse(localStorage.getItem(nameMonth));
+        var eventList = arrayMonth[day - 1];
 
+        for (let i = 0; i < eventList.length; i++) {
+
+            if (eventList[i].id == id) {
+
+                console.log("id found")
+                eventList[i].warning = false;
+                eventList[i].completed = true;
+            }
+        }
+
+        arrayMonth[day - 1] = eventList;
+        console.log(nameMonth);
+
+        console.log(arrayMonth);
+        localStorage.setItem(nameMonth, JSON.stringify(arrayMonth));
         document.getElementById(event.target.id).parentElement.remove();
+
     }
-
-
 }
 
 function monthYear(numMonthIni, yearIni) {
