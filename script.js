@@ -179,7 +179,6 @@ function addReminder(event, date) {
     }, 120000);
 }
 
-
 function reminderComplete(event, date) {
     // on 'event completed' clicked
     eventCompleted(event);
@@ -187,8 +186,6 @@ function reminderComplete(event, date) {
     console.log('reminder completed');
 
 }
-
-
 
 function reminderRemoved(event) {
     var windowReminder = document.getElementById(event.target.id).parentElement;
@@ -209,7 +206,6 @@ function removeWarning(event) {
     if (event.target.checked) {
         var id = event.target.dataset.id;
         document.getElementById(id).classList.remove("event-warning");
-
         eventCompleted(event);
         document.getElementById(event.target.id).parentElement.remove();
 
@@ -269,8 +265,6 @@ function setDate(d) {
     todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 }
 // populate calendar days
-
-
 function seasonClass(numMonth) {
 
     mainHeader.classList.remove(season);
@@ -279,16 +273,13 @@ function seasonClass(numMonth) {
         season = "winter";
     else if (numMonth > 7)
         season = "autum";
-    else if (numMonth > 5 && numMonth < 8)
+    else if (numMonth > 4 && numMonth < 8)
         season = "summer";
     else
         season = "spring";
-
     console.log(season);
     mainHeader.classList.add(season);
     mainContainer.classList.add(season);
-
-
 }
 
 function buildMonth(month) {
@@ -300,7 +291,6 @@ function buildMonth(month) {
     var dayInMonth;
 
     seasonClass(month.getNumMonth());
-
     if (currentMonth.getMonthYear() === month.getMonthYear()) {
         dayInMonth = today.getDate();
     }
