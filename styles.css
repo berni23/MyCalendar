@@ -80,29 +80,19 @@ body {
 }
 
 .spring .season-icon {
-
     background-image: url("images/spring.png");
 
 }
 
 .spring .today-cell>span {
-
     background-color: lightgreen
 }
-
-
-
-
-
-
-
 
 ul {
     list-style-type: none;
 }
 
 button {
-
     cursor: pointer;
 }
 
@@ -625,6 +615,11 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 90px;
     }
 
+    .season-icon {
+
+        display: none;
+    }
+
 }
 
 @media (max-width: 600px) {
@@ -648,6 +643,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 140px;
         display: flex
     }
+
 }
 
 @media (max-width: 500px) {
@@ -656,6 +652,8 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
         display: none;
     }
+
+
 }
 
 @media (max-height: 700px) {
@@ -669,21 +667,11 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
     .calendar-container>div {
         height: 40px;
+        font-size: 15px;
     }
 }
 
 @media (max-height: 450px) {
-
-    .calendar-container>div {
-        height: 40px;
-    }
-
-    .main-header {
-        display: none;
-    }
-}
-
-@media (max-height: 350px) {
 
     .main-header {
         display: none;
@@ -694,9 +682,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
     .calendar-container>div {
         height: 25px;
+        font-size: 10px;
     }
 
-    .main-header {
-        display: none;
-    }
 }
