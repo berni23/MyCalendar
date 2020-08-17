@@ -5,6 +5,13 @@ var daysWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
 var daysWeekShort = daysWeek.map(el => el.slice(0, 3));
 var monthsShort = months.map(el => el.slice(0, 3));
 
+var mainHeader = document.querySelector(".main-header");
+var mainContainer = document.querySelector("main");
+var summerIcon = document.getElementById("summer-icon");
+var springIcon = document.getElementById("spring-icon");
+var autumIcon = document.getElementById("autum-icon");
+var winterIcon = document.getElementById("winter-icon");
+
 var calendarContainer = document.querySelector(".calendar-container");
 var stringDays = document.querySelector(".string-days");
 var todaySpan = document.querySelector(".today-caption");
@@ -41,7 +48,7 @@ btnModal.addEventListener("click", toggleModal);
 closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
 document.addEventListener('keydown', handleKeyDown);
-todaySpan.addEventListener("click", backToCurrentMonth)
+todaySpan.addEventListener("click", backToCurrentMonth);
 remindExpire.addEventListener("click", toggleExpire);
 hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
@@ -51,6 +58,7 @@ var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
+var season = "summer";
 
 initializeCalendar();
 localStorage.clear()
@@ -142,27 +150,21 @@ function checkEvents(currentDay) {
 
         }
     }
-
     if (windoWarning) {
         showWarning();
 
     }
 
     if (windowReminder || windoWarning) {
-
         monthUpdated[dayNum - 1] = todayStored;
         //console.log(monthUpdated);
         saveMonth(monthUpdated, currentMonth.getMonthYear());
-
-
     }
 }
 
 function addReminder(event, date) {
-
     var monthYear = months[date.getMonth()] + date.getFullYear();
     var day = date.getDate();
-
     reminderWrapper.insertAdjacentHTML("afterbegin", `<div class = "info-reminder show-info"
     style = "position:relative"> <div> <span class = "iconify icon-clock" data-icon = "flat-color-icons:alarm-clock" data-inline = "false"> </span>
     <p> You have an upcoming event in <span class = "minutes-left"> ${event.reminder}</p></div>
@@ -171,7 +173,6 @@ function addReminder(event, date) {
     <button id=btn-reminderClose-${event.id}> Close </button></div>`);
     document.getElementById(`btn-reminderComplete-${event.id}`).addEventListener("click", reminderComplete);
     document.getElementById(`btn-reminderClose-${event.id}`).addEventListener("click", reminderRemoved)
-
     setTimeout(() => {
         var windowReminder = document.getElementById(`btn-reminderComplete-${event.id}`).parentElement
         if (windowReminder) windowReminder.remove()
@@ -181,7 +182,6 @@ function addReminder(event, date) {
 
 function reminderComplete(event, date) {
     // on 'event completed' clicked
-
     eventCompleted(event);
     reminderRemoved(event);
     console.log('reminder completed');
@@ -270,6 +270,27 @@ function setDate(d) {
 }
 // populate calendar days
 
+
+function seasonClass(numMonth) {
+
+    mainHeader.classList.remove(season);
+    mainContainer.classList.remove(season);
+    if (numMonth < 2 || numMonth == 11)
+        season = "winter";
+    else if (numMonth > 7)
+        season = "autum";
+    else if (numMonth > 5 && numMonth < 8)
+        season = "summer";
+    else
+        season = "spring";
+
+    console.log(season);
+    mainHeader.classList.add(season);
+    mainContainer.classList.add(season);
+
+
+}
+
 function buildMonth(month) {
     clearCalendar();
     monthLabel.textContent = month.getMonthName() + " " + month.getYear();
@@ -277,6 +298,8 @@ function buildMonth(month) {
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
     var dayInMonth;
+
+    seasonClass(month.getNumMonth());
 
     if (currentMonth.getMonthYear() === month.getMonthYear()) {
         dayInMonth = today.getDate();
