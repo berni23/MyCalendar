@@ -30,6 +30,8 @@ var modal = document.querySelector(".modal");
 var closeButton = document.querySelector(".close-button");
 var eventExpired = document.querySelector(".event-expired");
 var listExpired = document.getElementById("list-expired");
+var btnExpired = document.getElementById("button-expired");
+var reminderWrapper = document.querySelector(".container-reminder");
 
 btnCreateEvent.addEventListener("click", submitEvent);
 btnCancelEvent.addEventListener("click", toggleModal);
@@ -40,8 +42,9 @@ closeButton.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
 document.addEventListener('keydown', handleKeyDown);
 todaySpan.addEventListener("click", backToCurrentMonth)
-hasEndDate.addEventListener("click", toggleEndDate);
 remindExpire.addEventListener("click", toggleExpire);
+hasEndDate.addEventListener("click", toggleEndDate);
+btnExpired.addEventListener("click", hideWarning);
 
 var today = new Date();
 var todayStored; // today's array of events retrieved from local storage
@@ -50,13 +53,14 @@ var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 
 initializeCalendar();
+//localStorage.clear()
 
 function initializeCalendar() {
 
     setDate(today);
     buildMonth(displayedMonth);
     checkEventsMonth(getMonthStored(currentMonth));
-    timerCheckEvents = setInterval(updateToday, 30000);
+    timerCheckEvents = setInterval(updateToday, 10000); // to be set at 30 seconds
     // check current events and unpdate "today"
 
 }
@@ -94,7 +98,6 @@ function checkEventsMonth(monthStored) {
     var windoWarning = false;
 
     for (let i = 0; i < today.getDate(); i++) {
-
         var numDay = i + 1;
         var todayEvents = document.querySelectorAll(".day-" + numDay + ">span");
         for (let j = 0; j < monthStored[i].length; j++) {
@@ -123,12 +126,18 @@ function checkEvents(currentDay) {
 
     for (let i = 0; i < todayStored.length; i++) {
         let date = new Date(todayStored[i].dateIni);
+        let remindMillis = timerRemindMilis(todayStored[i].timeReminder);
+        let reminder = remindMillis ? new Date(date.getTime() - remindMillis) : null;
         if (!todayStored[i].completed && currentDay > date && !todayStored[i].warning) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
             todayStored[i].warning = true;
             addWarning(todayStored[i], date);
             // display warning, display event in red
+        } else if (reminder && !todayStored[i].completed && currentDay > reminder) {
+            addReminder(todayStored[i], date);
+            todayStored[i].reminder = null;
+
         }
     }
 
@@ -140,10 +149,51 @@ function checkEvents(currentDay) {
     }
 }
 
+function addReminder(event, date) {
+
+    var monthYear = months[date.getMonth()] + date.getFullYear();
+    var day = date.getDate();
+
+    reminderWrapper.insertAdjacentHTML("afterbegin", `<div class = "info-reminder show-info"
+    style = "position:relative"> <div> <span class = "iconify" data -icon = "flat-color-icons:alarm-clock" data-inline = "false"> </span>
+    <p> You have an upcoming event in <span class = "minutes-left"> ${event.timerRemind}</p></div>
+    <p> ${event.title}</p> <button id = btn-reminderComplete-${event.id} data-id = ${event.id}
+    data-monthyear = ${monthYear} data-day=${day}>Completed </button>
+    <button id=btn-reminderClose-${event.id}> Close </button></div>`);
+    document.getElementById(`btn-reminderComplete-${event.id}`).addEventListener("click", reminderComplete);
+    document.getElementById(`btn-reminderClose-${event.id}`).addEventListener("click", reminderRemoved)
+}
+
+/*< div class = "info-reminder show-info"
+ style = "position:relative" >
+     <
+     div > < span class = "iconify icon-clock"
+ data - icon = "flat-color-icons:clock"
+ data - inline = "false" > < /span> <
+     p > You have an upcoming
+ event in < span class = "minutes-left" > 15 < /span> minutes</p >
+     append child paragraph with event title and hour - day <
+     /div> <
+     p > title event < /p> <
+     button > Completed < /button> <button>Close</button >
+     <
+     /div>
+*/
+function reminderComplete(event, date) {
+    // on 'event completed' clicked
+
+
+
+}
+
+function reminderRemoved(event) {
+
+    event.remove();
+
+    console.log('remove');
+}
+
 function addWarning(event, date) {
-
-
-
     //console.log(date.getMonth())
     var monthYear = months[date.getMonth()] + date.getFullYear();
     var day = date.getDate();
@@ -153,40 +203,22 @@ function addWarning(event, date) {
 }
 
 function removeWarning(event) {
-
-
-
     if (event.target.checked) {
-
-
         var id = event.target.dataset.id;
-
         document.getElementById(id).classList.remove("event-warning");
         var nameMonth = event.target.dataset.monthyear;
-
-        console.log(event.target);
-
         var day = event.target.dataset.day;
         var arrayMonth = JSON.parse(localStorage.getItem(nameMonth));
         var eventList = arrayMonth[day - 1];
-
         for (let i = 0; i < eventList.length; i++) {
-
             if (eventList[i].id == id) {
-
-                console.log("id found")
                 eventList[i].warning = false;
                 eventList[i].completed = true;
             }
         }
-
         arrayMonth[day - 1] = eventList;
-        console.log(nameMonth);
-
-        console.log(arrayMonth);
         localStorage.setItem(nameMonth, JSON.stringify(arrayMonth));
         document.getElementById(event.target.id).parentElement.remove();
-
     }
 }
 
@@ -361,12 +393,14 @@ function createEvent() {
     var titleEvent = inputTitle.value;
     var descriptionEvent = inputEventDescription.value;
     var eventId = idEvent();
+    var reminderMillis = timerRemindMillis(timerRemind.value);
+    console.log(reminderMillis);
     return {
         id: eventId,
         title: titleEvent.trim(),
         dateIni: new Date(inputDateIni.value),
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
-        timeReminder: timerRemind.value,
+        timeReminder: reminderMillis,
         description: descriptionEvent.trim(),
         eventType: currentEventType,
         completed: false,
@@ -374,6 +408,36 @@ function createEvent() {
     }
 }
 
+function timerRemindMillis(value) {
+    var millis = 300000; // five min
+    switch (value) {
+        case "5 min": {
+            break;
+        }
+        case "10 min": {
+            millis *= 2;
+            break;
+        }
+        case "15 min": {
+
+            millis *= 3;
+            break;
+        }
+        case "30 min": {
+            millis *= 6;
+        }
+
+        case "1 hour": {
+            millis *= 12;
+            break;
+        }
+        default: {
+            millis = null;
+            break;
+        }
+    }
+    return millis;
+}
 
 function monthNameEvent(event) {
     let monthNum = event.dateIni.getMonth();
@@ -498,13 +562,12 @@ function toggleInfoWindow() {
     infoWindow.classList.toggle("show-info");
 }
 
-function showWarning() {
 
+function showWarning() {
     eventExpired.classList.add("show-info");
 }
 
 function hideWarning() {
-
     eventExpired.classList.remove("show-info");
 }
 

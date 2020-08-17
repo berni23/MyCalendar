@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css" />
-    <!-- import the webpage's javascript file -->
+
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
     <script type="text/javascript" src="script.js" defer></script>
 
@@ -15,13 +15,13 @@
     <header class="main-header">
         <div class="title">
             <span class="iconify icon" data-icon="fxemoji:calendar" data-inline="false"></span>
+            <span class="iconify" data-icon=" flat-color-icons:clock" data-inline="false"></span>
             <p>CALENDAR</p>
         </div>
         <div class="tooltip">
             <div class="today-caption"></div>
             <span class="tooltiptext"></span>
         </div>
-
         <div class="options">
             <div class="previous-next">
                 <button class="previous round">
@@ -34,34 +34,21 @@
     </header>
     <div class="info-window"> Event Successfully created!</div>
     <div class="event-expired ">
-
         <p> Expired events,<br> check to set them as finished</p>
         <ul id="list-expired">
-            <!-- <li>
-                <span>today's event</span>
-                <input type="checkbox" class="checkbox-warning">
-                <br>
-            </li>
-            <li>
-                <span>today's event</span>
-                <input type="checkbox" class="checkbox-warning">
-                <br>
-            </li>
-            <li>
-                <span>today's event</span>
-                <input type="checkbox" class="checkbox-warning">
-                <br>
-            </li>
-            <li>
-                <span>today's event</span>
-                <input type="checkbox" class="checkbox-warning">
-                <br>
-            </li>-->
         </ul>
+        <button id="button-expired">Done</button>
+    </div>
 
-        <button>Done</button>
+    <div class="container-reminder" style=" position: absolute; margin:10% 60%; width:30%">
 
-
+        <div class="info-reminder show-info" style="position:relative">
+            <div><span class="iconify icon-clock" data-icon="flat-color-icons:clock " data-inline="false"></span>
+                <p> You have an upcoming event in <span class="minutes-left">15</span> minutes</p>
+            </div>
+            <p> title event</p>
+            <button>Completed</button> <button>Close</button>
+        </div>
     </div>
     <main>
         <section class="string-days">
@@ -74,18 +61,8 @@
             <span>SAT</span>
         </section>
         <section class="calendar-container">
-            <!--  <div><span><br>1</span>
-                <div><span style="background-color: blue; border-radius:10px; padding:3px; font-size:15px">assembler
-                            10 am</span>
-                        <br>
-                        <span style="background-color: red; border-radius:10px; padding:3px; font-size:15px">doctor 6 pm
-                        </span>
-                    </div>
-            </div>
-            <div>
-                <br><span>2</span>
-            </div>
-            -->
+
+            <!--Days created dinamically in the .js-->
         </section>
     </main>
     <div class="modal">
@@ -95,31 +72,36 @@
             <form class="modal-form">
                 <ul>
                     <li><label>Title:</label>
-                        <input type="text" id="input-title"></li>
+                        <input type="text" id="input-title">
+                    </li>
                     <li><br></li>
                     <li><label>Initial date:</label>
-                        <input type="datetime-local" id="input-date-ini"></li>
+                        <input type="datetime-local" id="input-date-ini">
+                    </li>
                     <li><br></li>
                     <li><input type="checkbox" id="has-end-date">
-                        <label class="checkbox-label" style="margin-left:120px; margin-top:0">End date</label></li>
+                        <label class="checkbox-label" style="margin-left:120px; margin-top:0">End date</label>
+                    </li>
                     <li><br></li>
                     <li class="hidden"><label> End date:</label>
-                        <input type="datetime-local" id="input-date-end"></li>
+                        <input type="datetime-local" id="input-date-end">
+                    </li>
                     <li><br></li>
                     <li>
                         <input type="checkbox" id="remind-expire">
-                        <label class="checkbox-label" style="margin-left:120px; margin-top:0">Remind me when this event
+                        <label class="checkbox-label" style="margin-left:120px; margin-top:0; z-index:5">Remind me when
+                            this event
                             expires</label>
                     </li>
                     <li><br></li>
                     <li class="hidden"> <label>Time:</label>
                         <input list="timeRemind" id="timer-remind">
                         <datalist id="timeRemind">
-                            <option value="5 min" data-millis="300000"></option>
-                            <option value="10 min" data-millis="600000"> </option>
-                            <option value="15 min" data-millis="900000"></option>
-                            <option value="30 min" data-millis="1800000"></option>
-                            <option value="1 hour" data-millis="3600000"></option>
+                            <option value="5 min" millis="300000"></option>
+                            <option value="10 min" millis="600000"> </option>
+                            <option value="15 min" millis="900000"></option>
+                            <option value="30 min" millis="1800000"></option>
+                            <option value="1 hour" millis="3600000"></option>
                         </datalist></li>
                     <li><br></li>
                     <li><label>Description:</label><textarea rows="3" id="event-description"

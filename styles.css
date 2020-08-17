@@ -206,6 +206,7 @@ main {
     height: 32px;
 }
 
+
 /* modal css*/
 
 /* 1 - we create a semi-transparent background color with a transition */
@@ -250,7 +251,8 @@ main {
 }
 
 .info-window,
-.event-expired {
+.event-expired,
+.info-reminder {
 
     position: fixed;
     top: 40%;
@@ -266,9 +268,9 @@ main {
     transform: scale(1.1);
     opacity: 0;
     transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
-    z-index: 2;
 
 }
+
 
 .info-window {
 
@@ -294,6 +296,7 @@ main {
 
 }
 
+
 .event-expired ul li {
 
     display: flex;
@@ -302,12 +305,35 @@ main {
 
 }
 
+.container-reminder>div {
+
+    margin: 10px;
+}
+
+.info-reminder>div {
+
+    display: flex;
+}
+
+.info-reminder>div>p {
+
+    margin-left: 15px;
+}
+
+.icon-clock {
+
+    width: 48px;
+    height: 48px;
+    margin-top: 10px;
+}
+
 .show-modal,
 .show-info {
     opacity: 1;
     visibility: visible;
     transform: scale(1.0);
     transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+    z-index: 2;
 }
 
 .checkbox-warning {
@@ -331,7 +357,7 @@ main {
 */
 
 .modal-form {
-    position: relative;
+    position: frelative;
 }
 
 .modal-form label {
@@ -404,7 +430,8 @@ main {
 
 .Meeting {
 
-    background-color: bl;
+    background-color: rgba(0, 0, 255, 0.5);
+    ;
 
 }
 
@@ -427,7 +454,7 @@ main {
 
 .Reminder {
 
-    background-color: rbga(128, 0, 128, 0.5);
+    background-color: rgba(128, 0, 128, 0.5);
 }
 
 .event-warning {
@@ -436,10 +463,6 @@ main {
 
 
 }
-
-
-
-
 
 
 .hidden {
