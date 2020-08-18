@@ -49,7 +49,7 @@ var btnRemoveEvent = document.getElementById("remove-event");
 var btnSaveCheckEvent = document.getElementById("save-check-event");
 
 btnRemoveEvent.addEventListener("click", removeEvent);
-//btnSaveCheckEvent.addEventListener("click", saveCheckEvent);
+btnSaveCheckEvent.addEventListener("click", saveCheckEvent);
 btnCloseCheckEvent.addEventListener("click", hideEventInfo);
 btnCreateEvent.addEventListener("click", submitEvent);
 btnCancelEvent.addEventListener("click", toggleModal);
@@ -528,7 +528,7 @@ function hideWarning() {
 
 function windowOnClick(event) {
     if (event.target === modal) toggleModal();
-    else if (event.target == modalCheckEvent) hideEventInfo;
+    else if (event.target == modalCheckEvent) hideEventInfo();
 
 }
 
@@ -574,7 +574,7 @@ function removeEvent() {
     var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
     var storedDay = storedMonth[day - 1];
 
-    //  1- remove month from local storage
+    //  1- remove event from local storage
     for (let i = 0; i < storedDay.length; i++) {
         if (id == storedDay[i].id) {
             storedDay.splice(storedDay[i], 1);
@@ -585,7 +585,6 @@ function removeEvent() {
 
     // 2-  remove event label on calendar
     var eventWrapper = document.getElementById("day-" + day);
-    console.log(day);
     for (let i = 0; i < eventWrapper.children.length; i++) {
         if (eventWrapper.children[i].id == id) {
             eventWrapper.children[i + 1].remove();
@@ -596,8 +595,23 @@ function removeEvent() {
     hideEventInfo();
 }
 
-/*function saveCheckEvent() {
+function saveCheckEvent() {
     var description = checkDescription.textContent;
+    var id = checkTitle.dataset.id;
+    var day = checkTitle.dataset.day;
+    var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
+    var storedDay = storedMonth[day - 1];
+
+    for (let i = 0; i < storedDay.length; i++) {
+        if (id == storedDay[i].id) {
+            storedDay[i].description = description;
+        }
+    }
+
+    storedMonth[day - 1] = storedDay;
+    localStorage.setItem(displayedMonth.getMonthYear(), JSON.stringify(storedMonth));
+    hideEventInfo();
+
 
 }
 
@@ -610,8 +624,6 @@ var checkDescription = document.getElementById("check-description");
 
 */
 
-
-*/
 /*--------------------------------------
             UTILS
 ------------------------------------*/
