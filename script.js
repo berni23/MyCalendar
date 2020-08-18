@@ -46,7 +46,10 @@ var checkDate = document.getElementById("check-date");
 var checkEndDate = document.getElementById("check-end-date");
 var checkDescription = document.getElementById("check-description");
 var btnRemoveEvent = document.getElementById("remove-event");
+var btnSaveCheckEvent = document.getElementById("save-check-event");
 
+btnRemoveEvent.addEventListener("click", removeEvent);
+//btnSaveCheckEvent.addEventListener("click", saveCheckEvent);
 btnCloseCheckEvent.addEventListener("click", hideEventInfo);
 btnCreateEvent.addEventListener("click", submitEvent);
 btnCancelEvent.addEventListener("click", toggleModal);
@@ -61,6 +64,7 @@ remindExpire.addEventListener("click", toggleExpire);
 hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
 
+
 var today = new Date();
 var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
@@ -68,7 +72,7 @@ var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
 
-//localStorage.clear();
+localStorage.clear();
 initializeCalendar();
 
 function initializeCalendar() {
@@ -128,8 +132,6 @@ function checkEventsMonth(monthStored) {
 }
 
 function checkEvents(currentDay) {
-
-    console.log("events checked")
     var windoWarning = false;
     var windowReminder = false;
     var dayNum = currentDay.getDate();
@@ -142,7 +144,6 @@ function checkEvents(currentDay) {
 
         let remindMillis = timerRemindMillis(todayStored[i].reminder);
         let reminder = todayStored[i].reminder ? new Date(date.getTime() - remindMillis) : null;
-        console.log(reminder);
         if (!todayStored[i].completed && currentDay > date && !todayStored[i].warning) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
@@ -165,6 +166,7 @@ function checkEvents(currentDay) {
     }
 }
 
+
 function addReminder(event, date) {
     var monthYear = months[date.getMonth()] + date.getFullYear();
     var day = date.getDate();
@@ -182,11 +184,10 @@ function addReminder(event, date) {
     }, 120000);
 }
 
-function reminderComplete(event, date) {
+function reminderComplete(event) {
     // on 'event completed' clicked
     eventCompleted(event);
     reminderRemoved(event);
-
 }
 
 function reminderRemoved(event) {
@@ -283,7 +284,7 @@ function buildMonth(month) {
             day = createDayContainer(i);
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
-            eventContainer.classList.add("day-" + (i + 1));
+            eventContainer.id = "day-" + (i + 1);
             for (event of monthStored[i]) {
                 eventContainer.appendChild(displayEvent(event));
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
@@ -297,7 +298,7 @@ function buildMonth(month) {
             calendarContainer.appendChild(day);
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
-            eventContainer.classList.add("day-" + (i + 1));
+            eventContainer.id = "day-" + (i + 1);
             day.appendChild(eventContainer);
             calendarContainer.appendChild(day);
         }
@@ -329,21 +330,18 @@ function buildMonth(month) {
     function seasonClass(numMonth) {
         mainHeader.classList.remove(season);
         mainContainer.classList.remove(season);
-        if (numMonth < 2 || numMonth == 11)
-            season = "winter";
-        else if (numMonth > 7)
-            season = "autum";
-        else if (numMonth > 4 && numMonth < 8)
-            season = "summer";
-        else
-            season = "spring";
+        if (numMonth < 2 || numMonth == 11) season = "winter";
+        else if (numMonth > 7) season = "autum";
+        else if (numMonth > 4 && numMonth < 8) season = "summer";
+        else season = "spring";
         mainHeader.classList.add(season);
         mainContainer.classList.add(season);
     }
 }
 
 function displayEvent(event) {
-    newElement = document.createElement("span");
+
+    var newElement = document.createElement("span");
     newElement.textContent = event.title;
     newElement.classList.add("default-event");
     newElement.id = String(event.id);
@@ -396,7 +394,7 @@ function submitEvent() {
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
         if (name == currentMonth.getMonthYear()) {
-            var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
+            var eventWrapper = document.querySelector("#day-" + newEvent.dateIni.getDate());
             eventWrapper.appendChild(displayEvent(newEvent));
             eventWrapper.insertAdjacentHTML('beforeend', '<br>');
         }
@@ -421,42 +419,6 @@ function createEvent() {
         completed: false,
         warning: false
     }
-}
-
-function timerRemindMillis(value) {
-    var millis = 300000; // five min
-    switch (value) {
-        case "5 min": {
-            break;
-        }
-        case "10 min": {
-            millis *= 2;
-            break;
-        }
-        case "15 min": {
-
-            millis *= 3;
-            break;
-        }
-        case "30 min": {
-            millis *= 6;
-        }
-
-        case "1 hour": {
-            millis *= 12;
-            break;
-        }
-        default: {
-            millis = null;
-            break;
-        }
-    }
-    return millis;
-}
-
-function monthNameEvent(event) {
-    let monthNum = event.dateIni.getMonth();
-    return months[monthNum] + event.dateIni.getFullYear();
 }
 
 function getMonthObject(name, event) {
@@ -510,7 +472,6 @@ function validate() {
             );
             inputDateEnd.classList.add("error-input");
             validation = false;
-
         }
     }
     if (remindExpire.checked) {
@@ -524,7 +485,7 @@ function validate() {
         }
     }
 
-    if (inputEventDescription.textContent.length > 501) {
+    if (inputEventDescription.textContent.length > 500) {
         inputEventDescription.parentElement.insertAdjacentHTML(
             "afterend",
             "<div class='error-msg' style ='margin-top:85px'><p>The description must have a maximum of 500 characters</p></div>"
@@ -534,6 +495,126 @@ function validate() {
     }
     return validation; // true if validation passed, else false
 }
+
+
+/* modal  logic */
+
+function toggleModal() {
+    modal.classList.toggle("show-modal");
+}
+
+function toggleModalDay(event) {
+    if (!event.target.classList.contains("default-event")) {
+        toggleModal();
+        var d = new Date(displayedMonth.getYear(), displayedMonth.getNumMonth(), event.currentTarget.dataset.daynum, 9, 0);
+        var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+        var localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, -8);
+        inputDateIni.value = localISOTime;
+    }
+
+}
+
+function toggleInfoWindow() {
+    infoWindow.classList.toggle("show-info");
+}
+
+function showWarning() {
+    eventExpired.classList.add("show-info");
+}
+
+function hideWarning() {
+    eventExpired.classList.remove("show-info");
+}
+
+function windowOnClick(event) {
+    if (event.target === modal) toggleModal();
+    else if (event.target == modalCheckEvent) hideEventInfo;
+
+}
+
+
+
+/* Modal on event clicked*/
+
+function showEventInfo(event) {
+    modalCheckEvent.classList.add("show-info");
+    var id = event.currentTarget.id;
+    checkTitle.textContent = event.currentTarget.textContent;
+    checkTitle.dataset.id = id;
+    var day = event.target.parentElement.parentElement.getAttribute("data-daynum");
+    checkTitle.dataset.day = day;
+    var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
+    var storedDay = storedMonth[day - 1];
+    for (let i = 0; i < storedDay.length; i++) {
+        if (storedDay[i].id == id) {
+            checkDescription.textContent = storedDay[i].description;
+            checkDate.textContent = isoToReadable(storedDay[i].dateIni);
+            var eventType = storedDay[i].eventType;
+            if (eventType == "event-other") {
+                eventType = "General";
+            }
+            checkEventType.textContent = eventType;
+            checkTitle.classList.add(eventType + "-event");
+            if (storedDay[i].dateEnd) {
+                checkEndDate.textContent = isoToReadable(storedDay[i].dateEnd);
+            } else {
+                checkEndDate.textContent = "No end date provided";
+            }
+        }
+    }
+}
+
+function hideEventInfo() {
+    modalCheckEvent.classList.remove("show-info");
+}
+
+function removeEvent() {
+    var id = checkTitle.dataset.id;
+    var day = checkTitle.dataset.day;
+    var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
+    var storedDay = storedMonth[day - 1];
+
+    //  1- remove month from local storage
+    for (let i = 0; i < storedDay.length; i++) {
+        if (id == storedDay[i].id) {
+            storedDay.splice(storedDay[i], 1);
+        }
+    }
+    storedMonth[day - 1] = storedDay;
+    localStorage.setItem(displayedMonth.getMonthYear(), JSON.stringify(storedMonth));
+
+    // 2-  remove event label on calendar
+    var eventWrapper = document.getElementById("day-" + day);
+    console.log(day);
+    for (let i = 0; i < eventWrapper.children.length; i++) {
+        if (eventWrapper.children[i].id == id) {
+            eventWrapper.children[i + 1].remove();
+            eventWrapper.children[i].remove();
+        }
+    }
+
+    hideEventInfo();
+}
+
+/*function saveCheckEvent() {
+    var description = checkDescription.textContent;
+
+}
+
+/*var modalCheckEvent = document.querySelector(".modal-check-event");
+var checkTitle = document.getElementById("check-title");
+var checkEventType = document.getElementById("check-event-type");
+var checkDate = document.getElementById("check-date");
+var checkEndDate = document.getElementById("check-end-date");
+var checkDescription = document.getElementById("check-description");
+
+*/
+
+
+*/
+/*--------------------------------------
+            UTILS
+------------------------------------*/
 
 /* clear functions*/
 
@@ -558,82 +639,44 @@ function clearErrors() {
         div.classList.remove("error-input")
     }
 }
-/*--------------------------------------
-            UTILS
-------------------------------------*/
 
-/* modal  logic */
+function timerRemindMillis(value) {
+    var millis = 300000; // five min
+    switch (value) {
+        case "5 min": {
+            break;
+        }
+        case "10 min": {
+            millis *= 2;
+            break;
+        }
+        case "15 min": {
 
-function toggleModal() {
-    modal.classList.toggle("show-modal");
-}
+            millis *= 3;
+            break;
+        }
+        case "30 min": {
+            millis *= 6;
+        }
 
-function toggleModalDay(event) {
-
-    if (!event.target.classList.contains("default-event")) {
-        toggleModal();
-        var d = new Date(displayedMonth.getYear(), displayedMonth.getNumMonth(), event.currentTarget.dataset.daynum);
-        var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-        var localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, -8);
-        inputDateIni.value = localISOTime;
-    }
-
-}
-
-function toggleInfoWindow() {
-    infoWindow.classList.toggle("show-info");
-}
-
-function showWarning() {
-    eventExpired.classList.add("show-info");
-}
-
-function hideWarning() {
-    eventExpired.classList.remove("show-info");
-}
-
-var modalCheckEvent = document.querySelector(".modal-check-event");
-var checkTitle = document.getElementById("check-title");
-var checkEventType = document.getElementById("check-event-type");
-var checkDate = document.getElementById("check-date");
-var checkEndDate = document.getElementById("check-end-date");
-var checkDescription = document.getElementById("check-description");
-
-function showEventInfo(event) {
-
-    modalCheckEvent.classList.add("show-info");
-    var id = event.currentTarget.id;
-    checkTitle.textContent = event.currentTarget.textContent;
-    var day = event.target.parentElement.parentElement.getAttribute("data-daynum");
-    var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
-    var storedDay = storedMonth[day - 1];
-    for (let i = 0; i < storedDay.length; i++) {
-        if (storedDay[i].id == id) {
-            checkDescription.textContent = storedDay[i].description;
-            checkDate.textContent = isoToReadable(storedDay[i].dateIni);
-            var eventType = storedDay[i].eventType;
-            if (eventType == "event-other") {
-                eventType = "general";
-            }
-            checkEventType.textContent = eventType;
-            checkTitle.classList.add(eventType + "-event");
-
-            if (storedDay[i].dateEnd) {
-                checkEndDate.textContent = isoToReadable(storedDay[i].dateEnd);
-            } else {
-                checkEndDate.textContent = "No end date provided";
-            }
+        case "1 hour": {
+            millis *= 12;
+            break;
+        }
+        default: {
+            millis = null;
+            break;
         }
     }
+    return millis;
 }
 
-function hideEventInfo() {
-
-    modalCheckEvent.classList.remove("show-info");
+function monthNameEvent(event) {
+    let monthNum = event.dateIni.getMonth();
+    return months[monthNum] + event.dateIni.getFullYear();
 }
 
 function isoToReadable(isoDate) {
-
     var date = new Date(isoDate);
     var hours = date.getHours();
     var minutes = date.getMinutes();
@@ -641,24 +684,17 @@ function isoToReadable(isoDate) {
     var day = date.getDate();
     if (month < 10) month = "0" + month;
     if (hours < 10) hours = "0" + hours;
-    if (hours == "00") hours = "12";
-    else if (hours == "12") hours = "00";
+    //if (hours == "00") hours = "12";
+    //else if (hours == "12") hours = "00";
     if (minutes < 10) minutes = "0" + minutes;
     var stringDate = month + "/" + day + "/" + date.getFullYear() + "  at " + hours + ":" + minutes;
     return stringDate;
 }
 
-
-function windowOnClick(event) {
-    if (event.target === modal) {
-        modal.classList.toggle("show-modal");
-    }
-}
-
 function handleKeyDown(event) {
     if (event.keyCode === 27) { // hide modal on esc key pressed
         modal.classList.remove("show-modal");
-        modalCheckEvent.classList.remove("show-modal");
+        hideEventInfo();
     }
 }
 

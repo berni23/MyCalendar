@@ -384,7 +384,6 @@ main {
 
 }
 
-
 .info-window,
 .event-expired,
 .info-reminder {
@@ -407,7 +406,6 @@ main {
 }
 
 .info-window {
-
     top: 40%;
     left: 40%;
 }
@@ -418,44 +416,34 @@ main {
 }
 
 .event-expired ul {
-
     margin-right: 120px;
-
 }
 
 .event-expired>p {
-
     text-align: left;
     margin-left: 40px;
-
 }
 
 
 .event-expired ul li {
-
     display: flex;
     margin: 0;
     padding: 5px 0;
-
 }
 
 .container-reminder>div {
-
     margin: 10px;
 }
 
 .info-reminder>div {
-
     display: flex;
 }
 
 .info-reminder>div>p {
-
     margin-left: 15px;
 }
 
 .icon-clock {
-
     width: 48px;
     height: 48px;
     margin-top: 10px;
@@ -490,7 +478,7 @@ main {
 */
 
 .modal-form {
-    position: frelative;
+    position: relative;
 }
 
 .modal-form label {
