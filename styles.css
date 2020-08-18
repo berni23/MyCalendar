@@ -24,22 +24,19 @@ body {
 
 .summer .string-days,
 .summer .today-caption {
-
     color: goldenrod;
 }
 
 .summer .season-icon {
-
     background-image: url("images/summer.jpeg");
-
 }
 
 .summer .today-cell>span {
-    background-color: goldenrod;
+    background-color: rgba(218, 165, 32, 0.5);
+
 }
 
 .summer .calendar-container {
-
     background-image: url("images/ice_cream_icon.png")
 }
 
@@ -49,9 +46,7 @@ body {
 }
 
 .autum .season-icon {
-
     background-image: url("images/autum.png");
-
 }
 
 .autum .today-cell>span {
@@ -59,59 +54,42 @@ body {
 }
 
 .autum .calendar-container {
-
     background-image: url("images/autum_background.png");
-
 }
-
-
 
 .winter .string-days,
 .winter .today-caption {
-
     color: blue;
 }
 
 .winter .season-icon {
-
     background-image: url("images/winter.jpeg");
-
 }
 
 .winter .today-cell>span {
-
-
     background-color: blue
 }
 
-
 .winter .calendar-container {
-
-
     background-image: url("images/winter_background.png")
 }
 
 .spring .string-days,
 .spring .today-caption {
-
     color: lightgreen;
 }
 
 .spring .season-icon {
     background-image: url("images/spring.png");
-
 }
 
 .spring .today-cell>span {
     background-color: lightgreen
 }
 
-
 .spring .calendar-container {
-
     background-image: url("images/spring_background.png");
 }
-
 
 ul {
     list-style-type: none;
@@ -184,7 +162,6 @@ main {
     background-image: url("images/spring_background.png");
     background-size: 100vh;
     background-position: 50%;
-    opacity: 0.5;
     background-repeat: no-repeat;
 }
 
@@ -701,9 +678,23 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
 @media (max-height: 450px) {
 
-    .main-header {
+    .tooltip {
         display: none;
     }
+
+    .main-header {
+
+        margin-left: 50vh;
+        font-size: 10px;
+    }
+
+    .modal-button {
+
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+    }
+
 }
 
 @media (max-height: 300px) {

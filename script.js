@@ -53,7 +53,10 @@ remindExpire.addEventListener("click", toggleExpire);
 hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
 
+
+
 var today = new Date();
+
 var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
@@ -335,6 +338,8 @@ function buildMonth(month) {
         n++;
         let day = document.createElement("div");
         day.classList.add("cell");
+        day.setAttribute("data-daynum", n);
+        day.addEventListener("click", toggleModalDay);
         day.innerHTML = "<br><span>" + n + "</span>";
         if (n === dayInMonth && dayInMonth) {
             day.classList.add("today-cell");
@@ -575,10 +580,20 @@ function toggleModal() {
     modal.classList.toggle("show-modal");
 }
 
+function toggleModalDay(event) {
+
+    toggleModal();
+    var d = new Date(displayedMonth.getYear(), displayedMonth.getNumMonth(), event.currentTarget.dataset.daynum;);
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    var localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, -8);
+    console.log(localISOTime);
+    inputDateIni.value = localISOTime;
+
+}
+
 function toggleInfoWindow() {
     infoWindow.classList.toggle("show-info");
 }
-
 
 function showWarning() {
     eventExpired.classList.add("show-info");
