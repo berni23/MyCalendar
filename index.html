@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css" />
-
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
     <script type="text/javascript" src="script.js" defer></script>
 
@@ -15,7 +14,6 @@
     <header class="main-header">
         <div class="title">
             <span class="iconify icon" data-icon="fxemoji:calendar" data-inline="false"></span>
-            <span class="iconify" data-icon=" flat-color-icons:clock" data-inline="false"></span>
             <p>CALENDAR</p>
         </div>
         <div class="tooltip">
@@ -36,7 +34,7 @@
         </div>
     </header>
     <div class="info-window"> Event Successfully created!</div>
-    <div class="event-expired ">
+    <div class="event-expired">
         <p> Expired events,<br> check to set them as finished</p>
         <ul id="list-expired">
         </ul>
@@ -60,9 +58,9 @@
             <!--Days created dinamically in the .js-->
         </section>
     </main>
-    <div class="modal">
+    <div class="modal modal-create-form">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <span class="close-button" id="close-modal">&times;</span>
             <h1>Create event</h1>
             <form class="modal-form">
                 <ul>
@@ -116,7 +114,34 @@
             <button class="button-form" id="create-event">Create</button>
             <button class="button-form" id="cancel-event">Cancel</button>
         </div>
+    </div>
+    <div class="modal modal-check-event">
 
+        <div class="modal-check-content">
+            <span class="close-button" id="close-check-event">&times;</span>
+            <h1 id="check-title"></h1>
+            <ul>
+                <li>Event type:</li>
+                <li id="check-event-type" style="margin-left:40px;">
+                </li>
+            </ul>
+            <ul>
+                <li>Scheduled for: </li>
+                <li id="check-date"></li>
+            </ul>
+            <ul>
+                <li>End Date:</li>
+                <li id="check-end-date" style="margin-left:47px;">No end date provided</li>
+            </ul>
+            <ul>
+                <li> Description:</li>
+                <li><textarea rows="7" id="check-description" name="event-description" style="width:300px"></textarea>
+                </li>
+            </ul>
+
+            <button>Save changes</button>
+            <button id="remove-event" style="color:red">Remove Event</button>
+        </div>
     </div>
 </body>
 

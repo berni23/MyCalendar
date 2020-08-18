@@ -153,7 +153,6 @@ main {
     width: 230px;
 }
 
-
 .calendar-container {
     width: 100%;
     height: 85%;
@@ -178,7 +177,6 @@ main {
 }
 
 .calendar-container>div:nth-child(7n) {
-
     border-right: 1px solid black;
 }
 
@@ -189,10 +187,8 @@ main {
 }
 
 .cell:hover {
-
     overflow: visible;
 }
-
 
 .today-caption {
     font-size: 4em;
@@ -203,19 +199,16 @@ main {
 }
 
 .options {
-
     display: flex;
 }
 
 .month-year {
-
     margin: auto 5px;
     font-size: 1.5em;
     color: black;
 }
 
 .previous-next {
-
     width: 220px;
     display: flex;
 }
@@ -272,7 +265,6 @@ main {
     text-align: center;
     border-radius: 6px;
     padding: 5px;
-
     /* Position the tooltip */
     z-index: 1;
 }
@@ -286,8 +278,7 @@ main {
     height: 32px;
 }
 
-
-/* modal css*/
+/* modal event css*/
 
 /* 1 - we create a semi-transparent background color with a transition */
 
@@ -316,6 +307,42 @@ main {
     border-radius: 0.5rem;
 }
 
+
+
+
+.modal-check-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 1rem 1.5rem;
+    width: 32rem;
+    height: 35rem;
+    border-radius: 0.5rem;
+}
+
+.modal-check-event ul {
+    display: flex;
+    margin: 20px 0;
+
+}
+
+#check-title {
+
+    margin-bottom: 50px;
+}
+
+.modal-check-event li {
+
+    margin: 20px;
+}
+
+.modal-check-event .modal-check-event .modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
 .close-button {
     float: right;
     width: 1.5rem;
@@ -329,6 +356,39 @@ main {
 .close-button:hover {
     background-color: darkgray;
 }
+
+/* modal event info*/
+
+
+.modal-event {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.25s,
+        opacity 0.25s linear 0s,
+        transform 0
+}
+
+.modal-event-content {
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 1rem 1.5rem;
+    width: 32rem;
+    height: 40rem;
+    border-radius: 0.5rem;
+
+}
+
 
 .info-window,
 .event-expired,
@@ -350,7 +410,6 @@ main {
     transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
 
 }
-
 
 .info-window {
 
@@ -417,7 +476,6 @@ main {
 }
 
 .checkbox-warning {
-
     margin: 5px 0 0 25px;
 }
 
@@ -500,7 +558,10 @@ main {
     padding: 3px;
     font-size: 15px;
     z-index: 2;
+    cursor: pointer;
 }
+
+
 
 .event-wrapper {
 
@@ -511,13 +572,21 @@ main {
 .Meeting {
 
     background-color: rgba(0, 0, 255, 0.5);
-    ;
+}
 
+.Meeting-event {
+
+    color: rgba(0, 0, 255, 0.5);
 }
 
 .Personal {
 
     background-color: lightgreen;
+}
+
+.Personal-event {
+
+    color: lightgreen;
 }
 
 
@@ -526,10 +595,19 @@ main {
     background-color: yellow;
 }
 
+.Study-event {
+
+    color: yellow;
+}
 
 .event-other {
 
     background-color: lightblue;
+}
+
+.general-event {
+
+    color: lightBlue;
 }
 
 .Reminder {
@@ -537,13 +615,14 @@ main {
     background-color: rgba(128, 0, 128, 0.5);
 }
 
-.event-warning {
+.Reminder-event {
 
-    background-color: red;
-
-
+    color: rgba(128, 0, 128, 0.5);
 }
 
+.event-warning {
+    background-color: red;
+}
 
 .hidden {
     display: none !important;
@@ -552,7 +631,6 @@ main {
 /* responsiveness
 
 TO DO : HIDE EVENTS  in the responsive media queries!! */
-
 
 @media (max-width: 1600px) {
 
@@ -646,7 +724,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
     .previous-next {
         width: 140px;
-        display: flex
+        display: flex;
     }
 
 }
@@ -654,11 +732,8 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 @media (max-width: 500px) {
 
     .title {
-
         display: none;
     }
-
-
 }
 
 @media (max-height: 700px) {
@@ -693,6 +768,10 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 30px;
         height: 30px;
         font-size: 20px;
+    }
+
+    .title {
+        display: none;
     }
 
 }

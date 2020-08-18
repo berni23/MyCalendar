@@ -11,7 +11,6 @@ var summerIcon = document.getElementById("summer-icon");
 var springIcon = document.getElementById("spring-icon");
 var autumIcon = document.getElementById("autum-icon");
 var winterIcon = document.getElementById("winter-icon");
-
 var calendarContainer = document.querySelector(".calendar-container");
 var stringDays = document.querySelector(".string-days");
 var todaySpan = document.querySelector(".today-caption");
@@ -33,19 +32,35 @@ var monthLabel = document.querySelector(".month-year");
 var infoWindow = document.querySelector(".info-window");
 var btnPrevious = document.querySelector(".previous");
 var btnNext = document.querySelector(".next");
-var modal = document.querySelector(".modal");
-var closeButton = document.querySelector(".close-button");
+var modal = document.querySelector(".modal-create-form");
+
+var btnCloseModal = document.getElementById("close-modal");
+var btnCloseCheckEvent = document.getElementById("close-check-event");
+
 var eventExpired = document.querySelector(".event-expired");
 var listExpired = document.getElementById("list-expired");
 var btnExpired = document.getElementById("button-expired");
 var reminderWrapper = document.querySelector(".container-reminder");
+
+var modalCheckEvent = document.querySelector(".modal-check-event");
+var checkTitle = document.getElementById("check-title");
+var checkEventType = document.getElementById("check-event-type");
+var checkDate = document.getElementById("check-date");
+var checkEndDate = document.getElementById("check-end-date");
+var checkDescription = document.getElementById("check-description");
+
+var btnRemoveEvent = document.getElementById("remove-event");
+
+
+btnCloseCheckEvent.addEventListener("click", hideEventInfo);
+
 
 btnCreateEvent.addEventListener("click", submitEvent);
 btnCancelEvent.addEventListener("click", toggleModal);
 btnPrevious.addEventListener("click", previousMonth);
 btnNext.addEventListener("click", nextMonth);
 btnModal.addEventListener("click", toggleModal);
-closeButton.addEventListener("click", toggleModal);
+btnCloseModal.addEventListener("click", toggleModal);
 window.addEventListener("click", windowOnClick);
 document.addEventListener('keydown', handleKeyDown);
 todaySpan.addEventListener("click", backToCurrentMonth);
@@ -53,33 +68,28 @@ remindExpire.addEventListener("click", toggleExpire);
 hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
 
-
-
 var today = new Date();
-
 var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
 
+//localStorage.clear();
 initializeCalendar();
-localStorage.clear()
 
 function initializeCalendar() {
-
     setDate(today);
     buildMonth(displayedMonth);
     checkEventsMonth(getMonthStored(currentMonth));
     timerCheckEvents = setInterval(updateToday, 10000); // to be set at 30 seconds
-    // check current events and unpdate "today"
+    // check current events and update "today"
 
 }
 
 function updateToday() {
     newToday = new Date();
     checkEvents(newToday);
-
     if (newToday.getDate() != today.getDate()) {
         setDate(newToday);
         if (newToday.getMonth() != today.getMonth()) {
@@ -89,9 +99,7 @@ function updateToday() {
         today = newToday;
     }
 }
-
 /*localStorage.setItem(currentMonth.getMonthYear(), JSON.stringify(currentMonthStored))*/
-
 function getMonthStored(month) {
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
     if (!monthStored) {
@@ -107,7 +115,6 @@ function saveMonth(month, name) {
 
 function checkEventsMonth(monthStored) {
     var windoWarning = false;
-
     for (let i = 0; i < today.getDate(); i++) {
         var numDay = i + 1;
         var todayEvents = document.querySelectorAll(".day-" + numDay + ">span");
@@ -116,7 +123,6 @@ function checkEventsMonth(monthStored) {
             if (date.getTime() < today.getTime() && !monthStored[i][j].completed) {
                 monthStored[i][j].warning = true;
                 addWarning(monthStored[i][j], date); // only adding the warning to the html
-
                 todayEvents[j].classList.add("event-warning");
                 windoWarning = true;
             }
@@ -129,6 +135,8 @@ function checkEventsMonth(monthStored) {
 }
 
 function checkEvents(currentDay) {
+
+    console.log("events checked")
     var windoWarning = false;
     var windowReminder = false;
     var dayNum = currentDay.getDate();
@@ -138,8 +146,10 @@ function checkEvents(currentDay) {
 
     for (let i = 0; i < todayStored.length; i++) {
         let date = new Date(todayStored[i].dateIni);
+
         let remindMillis = timerRemindMillis(todayStored[i].reminder);
         let reminder = todayStored[i].reminder ? new Date(date.getTime() - remindMillis) : null;
+        console.log(reminder);
         if (!todayStored[i].completed && currentDay > date && !todayStored[i].warning) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
@@ -150,14 +160,11 @@ function checkEvents(currentDay) {
             addReminder(todayStored[i], date);
             todayStored[i].reminder = null;
             windowReminder = true;
-
         }
     }
     if (windoWarning) {
         showWarning();
-
     }
-
     if (windowReminder || windoWarning) {
         monthUpdated[dayNum - 1] = todayStored;
         //console.log(monthUpdated);
@@ -186,14 +193,12 @@ function reminderComplete(event, date) {
     // on 'event completed' clicked
     eventCompleted(event);
     reminderRemoved(event);
-    console.log('reminder completed');
 
 }
 
 function reminderRemoved(event) {
     var windowReminder = document.getElementById(event.target.id).parentElement;
     windowReminder.remove();
-    console.log(' reminder removed');
 }
 
 function addWarning(event, date) {
@@ -211,7 +216,6 @@ function removeWarning(event) {
         document.getElementById(id).classList.remove("event-warning");
         eventCompleted(event);
         document.getElementById(event.target.id).parentElement.remove();
-
     }
 }
 
@@ -228,12 +232,10 @@ function eventCompleted(event) {
     }
     arrayMonth[day - 1] = eventList;
     localStorage.setItem(nameMonth, JSON.stringify(arrayMonth));
-
 }
 
 function monthYear(numMonthIni, yearIni) {
     var monthObject = new Date(yearIni, numMonthIni);
-
     return {
         //   monthObject,
         getMonthYear() {
@@ -266,23 +268,6 @@ function monthYear(numMonthIni, yearIni) {
 function setDate(d) {
     todaySpan.textContent = daysWeekShort[d.getDay()] + ", " + d.getDate() + " " + monthsShort[d.getMonth()];
     todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
-}
-// populate calendar days
-function seasonClass(numMonth) {
-
-    mainHeader.classList.remove(season);
-    mainContainer.classList.remove(season);
-    if (numMonth < 2 || numMonth == 11)
-        season = "winter";
-    else if (numMonth > 7)
-        season = "autum";
-    else if (numMonth > 4 && numMonth < 8)
-        season = "summer";
-    else
-        season = "spring";
-    console.log(season);
-    mainHeader.classList.add(season);
-    mainContainer.classList.add(season);
 }
 
 function buildMonth(month) {
@@ -346,6 +331,23 @@ function buildMonth(month) {
         }
         return day;
     }
+
+    // populate calendar days
+    function seasonClass(numMonth) {
+        mainHeader.classList.remove(season);
+        mainContainer.classList.remove(season);
+        if (numMonth < 2 || numMonth == 11)
+            season = "winter";
+        else if (numMonth > 7)
+            season = "autum";
+        else if (numMonth > 4 && numMonth < 8)
+            season = "summer";
+        else
+            season = "spring";
+
+        mainHeader.classList.add(season);
+        mainContainer.classList.add(season);
+    }
 }
 
 function displayEvent(event) {
@@ -354,13 +356,12 @@ function displayEvent(event) {
     newElement.classList.add("default-event");
     newElement.id = String(event.id);
     newElement.classList.add(event.eventType);
+    newElement.addEventListener("click", showEventInfo);
     if (event.warning) {
         newElement.classList.add("event-warning");
     }
     return newElement;
 }
-
-
 /* navigate through months*/
 
 function previousMonth() {
@@ -381,10 +382,11 @@ function backToCurrentMonth() {
     }
 }
 
-function handleWarning() {
+/*function handleWarning() {
     var warningEvents = document.querySelectorAll(" .event-expired li");
     for (let i = 0; i < warningEvents.length; i++) {}
 }
+*/
 
 /*
 -------------------------
@@ -402,7 +404,6 @@ function submitEvent() {
         infoWindow.textContent = "Event successfully created!!"
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
-
         if (name == currentMonth.getMonthYear()) {
 
             var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
@@ -414,7 +415,6 @@ function submitEvent() {
 
     //let month = JSON.parse(localStorage.getItem(name));
 }
-
 /* create event */
 function createEvent() {
     var currentEventType = inputEvent.value ? inputEvent.value : "event-other";
@@ -482,15 +482,12 @@ function getMonthObject(name, event) {
     month[day - 1].push(event);
     return month;
 }
-
-
 /* validate form*/
-
 function validate() {
     let validation = true;
     let dateIni = new Date(inputDateIni.value);
     let dateEnd;
-    const TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
+    var TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
     clearErrors()
     if (!TitleRegEx.test(inputTitle.value)) {
         inputTitle.parentElement.insertAdjacentHTML(
@@ -500,16 +497,14 @@ function validate() {
         inputTitle.classList.add("error-input")
         validation = false;
     }
-
     if (inputDateIni.value == "" || today.getTime() > dateIni.getTime()) {
         inputDateIni.parentElement.insertAdjacentHTML(
             "beforeend",
             "<div class='error-msg'><p>Date event can't lay in the past or be blank</p></div>"
         );
-        inputDateIni.classList.add("error-input")
+        inputDateIni.classList.add("error-input");
         validation = false;
     }
-
     if (hasEndDate.checked) {
         dateEnd = new Date(inputDateEnd.value);
 
@@ -525,8 +520,8 @@ function validate() {
                 "beforeend",
                 "<div class='error-msg'><p>Please provide a date later than starting date</p></div>"
             );
-            inputDateEnd.classList.add("error-input")
-            validation = false
+            inputDateEnd.classList.add("error-input");
+            validation = false;
 
         }
     }
@@ -536,25 +531,32 @@ function validate() {
                 "beforeend",
                 "<div class='error-msg' style ='margin-top:20px'><p>Please provide a time or uncheck the box</p></div>"
             );
-            remindExpire.classList.add("error-input")
+            remindExpire.classList.add("error-input");
             validation = false;
         }
+    }
+
+    if (inputEventDescription.textContent.length > 501) {
+        inputEventDescription.parentElement.insertAdjacentHTML(
+            "afterend",
+            "<div class='error-msg' style ='margin-top:85px'><p>The description must have a maximum of 500 characters</p></div>"
+        );
+        inputEventDescription.classList.add("error-input");
+        validation = false;
     }
     return validation; // true if validation passed, else false
 }
 
-
 /* clear functions*/
-
 
 function clearCalendar() {
     calendarContainer.textContent = "";
 }
 
 function clearForm() {
-
     inputTitle.value = "";
     timerRemind.value = "";
+    inputEventDescription.textContent = "";
 
 }
 
@@ -568,8 +570,6 @@ function clearErrors() {
         div.classList.remove("error-input")
     }
 }
-
-
 /*--------------------------------------
             UTILS
 ------------------------------------*/
@@ -582,12 +582,13 @@ function toggleModal() {
 
 function toggleModalDay(event) {
 
-    toggleModal();
-    var d = new Date(displayedMonth.getYear(), displayedMonth.getNumMonth(), event.currentTarget.dataset.daynum;);
-    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    var localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, -8);
-    console.log(localISOTime);
-    inputDateIni.value = localISOTime;
+    if (!event.target.classList.contains("default-event")) {
+        toggleModal();
+        var d = new Date(displayedMonth.getYear(), displayedMonth.getNumMonth(), event.currentTarget.dataset.daynum);
+        var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+        var localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, -8);
+        inputDateIni.value = localISOTime;
+    }
 
 }
 
@@ -603,6 +604,63 @@ function hideWarning() {
     eventExpired.classList.remove("show-info");
 }
 
+var modalCheckEvent = document.querySelector(".modal-check-event");
+var checkTitle = document.getElementById("check-title");
+var checkEventType = document.getElementById("check-event-type");
+var checkDate = document.getElementById("check-date");
+var checkEndDate = document.getElementById("check-end-date");
+var checkDescription = document.getElementById("check-description");
+
+function showEventInfo(event) {
+
+    modalCheckEvent.classList.add("show-info");
+    var id = event.currentTarget.id;
+    checkTitle.textContent = event.currentTarget.textContent;
+    var day = event.target.parentElement.parentElement.getAttribute("data-daynum");
+    var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
+    var storedDay = storedMonth[day - 1];
+    for (let i = 0; i < storedDay.length; i++) {
+        if (storedDay[i].id == id) {
+            checkDescription.textContent = storedDay[i].description;
+            checkDate.textContent = isoToReadable(storedDay[i].dateIni);
+            var eventType = storedDay[i].eventType;
+            if (eventType == "event-other") {
+                eventType = "general";
+            }
+            checkEventType.textContent = eventType;
+            checkTitle.classList.add(eventType + "-event");
+
+            if (storedDay[i].dateEnd) {
+                checkEndDate.textContent = isoToReadable(storedDay[i].dateEnd);
+            } else {
+                checkEndDate.textContent = "No end date provided";
+            }
+        }
+    }
+}
+
+function hideEventInfo() {
+
+    modalCheckEvent.classList.remove("show-info");
+}
+
+function isoToReadable(isoDate) {
+
+    var date = new Date(isoDate);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    if (month < 10) month = "0" + month;
+    if (hours < 10) hours = "0" + hours;
+    if (hours == "00") hours = "12";
+    else if (hours == "12") hours = "00";
+    if (minutes < 10) minutes = "0" + minutes;
+    var stringDate = month + "/" + day + "/" + date.getFullYear() + "  at " + hours + ":" + minutes;
+    return stringDate;
+}
+
+
 function windowOnClick(event) {
     if (event.target === modal) {
         modal.classList.toggle("show-modal");
@@ -612,6 +670,7 @@ function windowOnClick(event) {
 function handleKeyDown(event) {
     if (event.keyCode === 27) { // hide modal on esc key pressed
         modal.classList.remove("show-modal");
+        modalCheckEvent.classList.remove("show-modal");
     }
 }
 
