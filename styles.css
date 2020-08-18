@@ -307,9 +307,6 @@ main {
     border-radius: 0.5rem;
 }
 
-
-
-
 .modal-check-content {
     position: absolute;
     top: 50%;
@@ -329,12 +326,10 @@ main {
 }
 
 #check-title {
-
     margin-bottom: 50px;
 }
 
 .modal-check-event li {
-
     margin: 20px;
 }
 
@@ -670,7 +665,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 @media (max-width: 1100px) {
 
     main {
-        width: 850px;
+        width: 750px;
     }
 
     .string-days>span {
@@ -679,7 +674,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     }
 
     .calendar-container>div {
-        width: 115px;
+        width: 101.4px;
     }
 }
 

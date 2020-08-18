@@ -33,28 +33,21 @@ var infoWindow = document.querySelector(".info-window");
 var btnPrevious = document.querySelector(".previous");
 var btnNext = document.querySelector(".next");
 var modal = document.querySelector(".modal-create-form");
-
 var btnCloseModal = document.getElementById("close-modal");
 var btnCloseCheckEvent = document.getElementById("close-check-event");
-
 var eventExpired = document.querySelector(".event-expired");
 var listExpired = document.getElementById("list-expired");
 var btnExpired = document.getElementById("button-expired");
 var reminderWrapper = document.querySelector(".container-reminder");
-
 var modalCheckEvent = document.querySelector(".modal-check-event");
 var checkTitle = document.getElementById("check-title");
 var checkEventType = document.getElementById("check-event-type");
 var checkDate = document.getElementById("check-date");
 var checkEndDate = document.getElementById("check-end-date");
 var checkDescription = document.getElementById("check-description");
-
 var btnRemoveEvent = document.getElementById("remove-event");
 
-
 btnCloseCheckEvent.addEventListener("click", hideEventInfo);
-
-
 btnCreateEvent.addEventListener("click", submitEvent);
 btnCancelEvent.addEventListener("click", toggleModal);
 btnPrevious.addEventListener("click", previousMonth);
@@ -228,6 +221,7 @@ function eventCompleted(event) {
     for (let i = 0; i < eventList.length; i++) {
         if (eventList[i].id == id) {
             eventList[i].completed = true;
+            eventList[i].warning = false;
         }
     }
     arrayMonth[day - 1] = eventList;
@@ -277,7 +271,6 @@ function buildMonth(month) {
     var cellsLeft = totalCells - numCells - month.firstDayMonthWeekDay();
     var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
     var dayInMonth;
-
     seasonClass(month.getNumMonth());
     if (currentMonth.getMonthYear() === month.getMonthYear()) {
         dayInMonth = today.getDate();
@@ -344,7 +337,6 @@ function buildMonth(month) {
             season = "summer";
         else
             season = "spring";
-
         mainHeader.classList.add(season);
         mainContainer.classList.add(season);
     }
@@ -366,7 +358,6 @@ function displayEvent(event) {
 
 function previousMonth() {
     displayedMonth.addMonth(-1);
-
     buildMonth(displayedMonth);
 }
 
@@ -405,14 +396,12 @@ function submitEvent() {
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
         if (name == currentMonth.getMonthYear()) {
-
             var eventWrapper = document.querySelector(".day-" + newEvent.dateIni.getDate());
             eventWrapper.appendChild(displayEvent(newEvent));
             eventWrapper.insertAdjacentHTML('beforeend', '<br>');
         }
         clearForm();
     }
-
     //let month = JSON.parse(localStorage.getItem(name));
 }
 /* create event */
@@ -507,7 +496,6 @@ function validate() {
     }
     if (hasEndDate.checked) {
         dateEnd = new Date(inputDateEnd.value);
-
         if (inputDateEnd.value == "") {
             hasEndDate.parentElement.insertAdjacentHTML(
                 "beforeend",
