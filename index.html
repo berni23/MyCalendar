@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
     <script type="text/javascript" src="script.js" defer></script>
-
 </head>
 
 <body>
@@ -32,6 +31,10 @@
         </div>
     </header>
     <div class="info-window"> Event Successfully created!</div>
+    <div class="remove-window" style="z-index:10"><span>This operation can't be undone,
+            continue?</span><br><br><br>
+        <button id="remove-continue">Remove event</button>
+        <button id="remove-cancel">Cancel</button></div>
     <div class="event-expired">
         <p> Expired events,<br> check to set them as finished</p>
         <ul id="list-expired">

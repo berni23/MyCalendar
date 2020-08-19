@@ -48,7 +48,13 @@ var checkDescription = document.getElementById("check-description");
 var btnRemoveEvent = document.getElementById("remove-event");
 var btnSaveCheckEvent = document.getElementById("save-check-event");
 
-btnRemoveEvent.addEventListener("click", removeEvent);
+var windowRemoveEvent = document.querySelector(".remove-window")
+var btnRemoveContinue = document.getElementById("remove-continue");
+var btnRemoveCancel = document.getElementById("remove-cancel");
+
+btnRemoveEvent.addEventListener("click", askRemove);
+btnRemoveContinue.addEventListener("click", removeEvent);
+btnRemoveCancel.addEventListener("click", toggleAskRemove);
 btnSaveCheckEvent.addEventListener("click", saveCheckEvent);
 btnCloseCheckEvent.addEventListener("click", hideEventInfo);
 btnCreateEvent.addEventListener("click", submitEvent);
@@ -72,7 +78,6 @@ var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
 
-localStorage.clear();
 initializeCalendar();
 
 function initializeCalendar() {
@@ -568,6 +573,11 @@ function hideEventInfo() {
     modalCheckEvent.classList.remove("show-info");
 }
 
+function askRemove() {
+    toggleAskRemove();
+    console.log("ask remove");
+}
+
 function removeEvent() {
     var id = checkTitle.dataset.id;
     var day = checkTitle.dataset.day;
@@ -593,6 +603,10 @@ function removeEvent() {
     }
 
     hideEventInfo();
+    toggleAskRemove();
+    toggleInfoWindow();
+    infoWindow.textContent = "Event succesfully removed";
+    setTimeout(toggleInfoWindow, 1500);
 }
 
 function saveCheckEvent() {
@@ -607,12 +621,9 @@ function saveCheckEvent() {
             storedDay[i].description = description;
         }
     }
-
     storedMonth[day - 1] = storedDay;
     localStorage.setItem(displayedMonth.getMonthYear(), JSON.stringify(storedMonth));
     hideEventInfo();
-
-
 }
 
 /*var modalCheckEvent = document.querySelector(".modal-check-event");
@@ -663,14 +674,12 @@ function timerRemindMillis(value) {
             break;
         }
         case "15 min": {
-
             millis *= 3;
             break;
         }
         case "30 min": {
             millis *= 6;
         }
-
         case "1 hour": {
             millis *= 12;
             break;
@@ -725,6 +734,10 @@ function toggleEndDate() {
 
 function toggleExpire() {
     timerRemind.parentElement.classList.toggle("hidden");
+}
+
+function toggleAskRemove() {
+    windowRemoveEvent.classList.toggle("show-info");
 }
 
 function idEvent() {

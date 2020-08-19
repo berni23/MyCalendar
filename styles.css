@@ -386,7 +386,8 @@ main {
 
 .info-window,
 .event-expired,
-.info-reminder {
+.info-reminder,
+.remove-window {
 
     position: fixed;
     top: 40%;
@@ -403,6 +404,11 @@ main {
     opacity: 0;
     transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
 
+}
+
+.remove-event>span {
+
+    margin-bottom: 20px;
 }
 
 .info-window {
@@ -633,16 +639,28 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1500px) {
 
     main {
 
-        width: 1130px;
+        width: 1300px;
     }
 
     .string-days>span {
         text-align: center;
         justify-content: space-between;
+    }
+
+    .calendar-container>div {
+        width: 175.88px;
+    }
+}
+
+@media (max-width: 1400px) {
+
+    main {
+
+        width: 1130px;
     }
 
     .calendar-container>div {
@@ -656,11 +674,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 750px;
     }
 
-    .string-days>span {
-        text-align: center;
-        justify-content: space-between;
-    }
-
     .calendar-container>div {
         width: 101.4px;
     }
@@ -672,17 +685,11 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         width: 650px;
     }
 
-    .string-days>span {
-        text-align: center;
-        justify-content: space-between;
-    }
-
     .calendar-container>div {
         width: 90px;
     }
 
     .season-icon {
-
         display: none;
     }
 
