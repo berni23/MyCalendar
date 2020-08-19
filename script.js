@@ -54,7 +54,7 @@ var btnRemoveCancel = document.getElementById("remove-cancel");
 
 btnRemoveEvent.addEventListener("click", askRemove);
 btnRemoveContinue.addEventListener("click", removeEvent);
-btnRemoveCancel.addEventListener("click", toggleAskRemove);
+btnRemoveCancel.addEventListener("click", hideAskRemove);
 btnSaveCheckEvent.addEventListener("click", saveCheckEvent);
 btnCloseCheckEvent.addEventListener("click", hideEventInfo);
 btnCreateEvent.addEventListener("click", submitEvent);
@@ -78,6 +78,7 @@ var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
 
+//localStorage.clear();
 initializeCalendar();
 
 function initializeCalendar() {
@@ -290,8 +291,13 @@ function buildMonth(month) {
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
             eventContainer.id = "day-" + (i + 1);
-            for (event of monthStored[i]) {
-                eventContainer.appendChild(displayEvent(event));
+            for (let j = 0; j < monthStored[i].length; j++) {
+                if (eventContainer.children.length == 8) {
+
+                    eventContainer.insertAdjacentHTML('beforeend', '<br class = "extra-break">');
+
+                }
+                eventContainer.appendChild(displayEvent(monthStored[i][j]));
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
             }
             day.appendChild(eventContainer);
@@ -345,7 +351,6 @@ function buildMonth(month) {
 }
 
 function displayEvent(event) {
-
     var newElement = document.createElement("span");
     newElement.textContent = event.title;
     newElement.classList.add("default-event");
@@ -355,6 +360,7 @@ function displayEvent(event) {
     if (event.warning) {
         newElement.classList.add("event-warning");
     }
+
     return newElement;
 }
 /* navigate through months*/
@@ -400,6 +406,9 @@ function submitEvent() {
         setTimeout(toggleInfoWindow, 1500);
         if (name == currentMonth.getMonthYear()) {
             var eventWrapper = document.querySelector("#day-" + newEvent.dateIni.getDate());
+            if (eventWrapper.children.length == 8) {
+                eventWrapper.insertAdjacentHTML('beforeend', '<br class = "extra-break">');
+            }
             eventWrapper.appendChild(displayEvent(newEvent));
             eventWrapper.insertAdjacentHTML('beforeend', '<br>');
         }
@@ -574,7 +583,7 @@ function hideEventInfo() {
 }
 
 function askRemove() {
-    toggleAskRemove();
+    showAskRemove();
     console.log("ask remove");
 }
 
@@ -603,7 +612,7 @@ function removeEvent() {
     }
 
     hideEventInfo();
-    toggleAskRemove();
+    hideAskRemove();
     toggleInfoWindow();
     infoWindow.textContent = "Event succesfully removed";
     setTimeout(toggleInfoWindow, 1500);
@@ -736,8 +745,15 @@ function toggleExpire() {
     timerRemind.parentElement.classList.toggle("hidden");
 }
 
-function toggleAskRemove() {
-    windowRemoveEvent.classList.toggle("show-info");
+function showAskRemove() {
+    windowRemoveEvent.classList.add("show-info");
+    windowRemoveEvent.style.zIndex = 5;
+}
+
+function hideAskRemove() {
+
+    windowRemoveEvent.classList.remove("show-info");
+    windowRemoveEvent.style.zIndex = 1;
 }
 
 function idEvent() {
