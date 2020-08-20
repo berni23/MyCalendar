@@ -79,6 +79,7 @@ var timerCheckEvents;
 var season = "summer";
 
 initializeCalendar();
+//localStorage.clear();
 
 function initializeCalendar() {
     setDate(today);
@@ -408,15 +409,15 @@ function submitEvent() {
             var events = monthArray[newEvent.dateIni.getDate() - 1];
 
             for (let i = 0; i < events.length; i++) {
-                eventWrapper.appendChild(displayEvent(events[i]));
-                eventWrapper.appendChild(document.createElement('br'));
-                if (eventWrapper.children.length == 7) {
+                if (eventWrapper.children.length == 8) {
                     eventWrapper.insertAdjacentHTML('beforeend', '<br class = "extra-break">');
                 }
+                eventWrapper.appendChild(displayEvent(events[i]));
+                eventWrapper.appendChild(document.createElement('br'));
+
 
             }
 
-            console.log(eventWrapper.children);
         }
 
 
@@ -424,16 +425,19 @@ function submitEvent() {
     }
     //let month = JSON.parse(localStorage.getItem(name));
 }
+
 /* create event */
 function createEvent() {
     var currentEventType = inputEvent.value ? inputEvent.value : "event-other";
     var titleEvent = inputTitle.value;
     var descriptionEvent = inputEventDescription.value;
+    var initialDate = new Date(inputDateIni.value);
     var eventId = idEvent();
     return {
         id: eventId,
         title: titleEvent.trim(),
-        dateIni: new Date(inputDateIni.value),
+        dateIni: initialDate,
+        millis: initialDate.getTime(),
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
         reminder: timerRemind.value,
         description: descriptionEvent.trim(),
@@ -453,8 +457,10 @@ function getMonthObject(name, event) {
         month = populateMonth(getDaysInMonth(monthNum, year));
     }
     month[day - 1].push(event);
-    console.log(month[day - 1])
+    console.log('not sorted', month[day - 1])
     let daySorted = month[day - 1].sort(compareDateIni);
+
+    console.log('sorted', daySorted)
 
     month[day - 1] = daySorted;
     console.log(month[day - 1])
@@ -598,7 +604,6 @@ function hideEventInfo() {
 
 function askRemove() {
     showAskRemove();
-    console.log("ask remove");
 }
 
 function removeEvent() {
@@ -627,7 +632,6 @@ function removeEvent() {
 
             eventWrapper.children[i].remove();
             eventWrapper.children[i - 1].remove();
-            console.log(i);
 
         }
     }
@@ -797,10 +801,10 @@ function populateMonth(len) {
 
 function compareDateIni(event1, event2) {
 
-    if (event1.dateIni < event2.dateIni) {
+    if (event1.millis < event2.millis) {
         return -1;
     }
-    if (event1.dateIni > event2.dateIni) {
+    if (event1.millis > event2.millis) {
         return 1;
     }
 
