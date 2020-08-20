@@ -44,6 +44,8 @@ var checkTitle = document.getElementById("check-title");
 var checkEventType = document.getElementById("check-event-type");
 var checkDate = document.getElementById("check-date");
 var checkEndDate = document.getElementById("check-end-date");
+var checkReminder = document.getElementById("check-reminder");
+var checkStatus = document.getElementById("check-status");
 var checkDescription = document.getElementById("check-description");
 var btnRemoveEvent = document.getElementById("remove-event");
 var btnSaveCheckEvent = document.getElementById("save-check-event");
@@ -58,7 +60,7 @@ btnRemoveCancel.addEventListener("click", hideAskRemove);
 btnSaveCheckEvent.addEventListener("click", saveCheckEvent);
 btnCloseCheckEvent.addEventListener("click", hideEventInfo);
 btnCreateEvent.addEventListener("click", submitEvent);
-btnCancelEvent.addEventListener("click", toggleModal);
+btnCancelEvent.addEventListener("click", cancelEvent);
 btnPrevious.addEventListener("click", previousMonth);
 btnNext.addEventListener("click", nextMonth);
 btnModal.addEventListener("click", toggleModal);
@@ -71,13 +73,25 @@ hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
 
 
+
+/* Buglist
+
+
+1 hour reminder does not work
+2- creating event near actual hour fails sometimes
+
+
+*/
+
+//localStorage.clear()
 var today = new Date();
+
+//today.setMonth(today.getMonth() + 1);
 var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
-localStorage.clear();
 initializeCalendar();
 
 
@@ -92,6 +106,7 @@ function initializeCalendar() {
 
 function updateToday() {
     newToday = new Date();
+    // newToday.setMonth(updateToday.getMonth() + 1)
     checkEvents(newToday);
     if (newToday.getDate() != today.getDate()) {
         setDate(newToday);
@@ -150,8 +165,8 @@ function checkEvents(currentDay) {
     for (let i = 0; i < todayStored.length; i++) {
         let date = new Date(todayStored[i].dateIni);
 
-        let remindMillis = timerRemindMillis(todayStored[i].reminder);
-        let reminder = todayStored[i].reminder ? new Date(date.getTime() - remindMillis) : null;
+        console.log(todayStored[i].reminder);
+        let reminder = todayStored[i].reminder ? new Date(date.getTime() - timerRemindMillis(todayStored[i].reminder)) : null;
         if (!todayStored[i].completed && currentDay > date && !todayStored[i].warning) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
@@ -203,6 +218,8 @@ function reminderRemoved(event) {
     windowReminder.remove();
 }
 
+
+// TODO( create class "event-completed, where the brightness is lower")
 function addWarning(event, date) {
     //console.log(date.getMonth())
     var monthYear = months[date.getMonth()] + date.getFullYear();
@@ -384,7 +401,7 @@ function windowEventList(event) {
     if (noWindow) {
 
         var eventWrapper = document.getElementById("day-" + event.currentTarget.dataset.daynum);
-        if (eventWrapper.children.length > 7) {
+        if (eventWrapper.children.length > 8) {
 
             noWindow = false;
             event.currentTarget.classList.add("day-wrap");
@@ -394,22 +411,6 @@ function windowEventList(event) {
         }
     }
 }
-/*if (noWindow) {
-    var posLeft = event.currentTarget.offsetLeft;
-        var window = document.createElement("div");
-        window.classList.add("window-events-list");
-        window.style.marginLeft = posLeft;
-        window.marginTop = posTop;
-        window.innerHTML = event.target.innerHTML;
-window.dataset.wrapperId = event.target.id;
-window.addEventListener("mouseout", removeEventList);
-
-event.currentTarget.appendChild(window);
-noWindow = false;
-event.currentTarget.removeEventListener("mouseover", windowEventList);
-
-*/
-
 
 function removeEventList(event) {
 
@@ -474,6 +475,7 @@ function submitEvent() {
             }
         }
         clearForm();
+        clearErrors();
     }
     //let month = JSON.parse(localStorage.getItem(name));
 }
@@ -485,6 +487,8 @@ function createEvent() {
     var descriptionEvent = inputEventDescription.value;
     var initialDate = new Date(inputDateIni.value);
     var eventId = idEvent();
+
+    console.log(timerRemind.value)
     return {
         id: eventId,
         title: titleEvent.trim(),
@@ -518,7 +522,7 @@ function validate() {
     let dateIni = new Date(inputDateIni.value);
     let dateEnd;
     var TitleRegEx = /\b.{1,60}\b/ // literally whatever between 1 and 60 chars
-    clearErrors()
+    clearErrors();
     if (!TitleRegEx.test(inputTitle.value)) {
         inputTitle.parentElement.insertAdjacentHTML(
             "beforeend",
@@ -561,6 +565,18 @@ function validate() {
             );
             remindExpire.classList.add("error-input");
             validation = false;
+
+            var dateRemind = new Date();
+            dateRemind.setTime(dateRemind.getTime() + timerRemindMillis(timerRemind.value));
+        } else if (dateRemind > dateIni) {
+
+            timerRemind.parentElement.insertAdjacentHTML(
+                "beforeend",
+                "<div class='error-msg' style ='margin-top:25px; margin-right:5px;'><p>The event is scheduled sooner than in " + timerRemind.value + "</p></div>"
+            );
+            timerRemind.classList.add("error-input");
+            validation = false;
+
         }
     }
 
@@ -576,9 +592,18 @@ function validate() {
 }
 
 
+
 /* modal  logic */
 
+function cancelEvent() {
+
+
+    clearErrors();
+    toggleModal();
+}
+
 function toggleModal() {
+
     modal.classList.toggle("show-modal");
 }
 
@@ -629,19 +654,19 @@ function showEventInfo(event) {
             checkDescription.textContent = storedDay[i].description;
             checkDate.textContent = isoToReadable(storedDay[i].dateIni);
             var eventType = storedDay[i].eventType;
-            if (eventType == "event-other") {
-                eventType = "General";
-            }
+            if (eventType == "event-other") eventType = "General";
             checkEventType.textContent = eventType;
             checkTitle.classList.add(eventType + "-event");
-            if (storedDay[i].dateEnd) {
-                checkEndDate.textContent = isoToReadable(storedDay[i].dateEnd);
-            } else {
-                checkEndDate.textContent = "No end date provided";
-            }
+            if (storedDay[i].dateEnd) checkEndDate.textContent = isoToReadable(storedDay[i].dateEnd);
+            else checkEndDate.textContent = "No end date provided";
+            if (storedDay[i].reminder) checkReminder.textContent = storedDay[i].reminder + " in advance";
+            else checkReminder.textContent = "no reminder";
+            if (storedDay[i].completed) checkStatus.textContent = "Completed";
+            else checkStatus.textContent = "Pending";
         }
     }
 }
+
 
 function hideEventInfo() {
     modalCheckEvent.classList.remove("show-info");
@@ -652,6 +677,13 @@ function askRemove() {
 }
 
 function removeEvent() {
+
+    hideEventInfo();
+    hideAskRemove();
+    toggleInfoWindow();
+    infoWindow.textContent = "Event succesfully removed";
+    setTimeout(toggleInfoWindow, 1500);
+
     var id = checkTitle.dataset.id;
     var day = checkTitle.dataset.day;
     var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
@@ -738,29 +770,29 @@ function clearErrors() {
         div.remove();
     }
     for (div of errorInput) {
-        div.classList.remove("error-input")
+        div.classList.remove("error-input");
     }
 }
 
 function timerRemindMillis(value) {
     var millis = 300000; // five min
     switch (value) {
-        case "5 min": {
+        case "5 minutes":
             break;
-        }
-        case "10 min": {
+        case "10 minutes": {
             millis *= 2;
             break;
         }
-        case "15 min": {
+        case "15 minutes": {
             millis *= 3;
             break;
         }
-        case "30 min": {
+        case "30 minutes": {
             millis *= 6;
+            break;
         }
         case "1 hour": {
-            millis *= 12;
+            millis = "3600000"
             break;
         }
         default: {

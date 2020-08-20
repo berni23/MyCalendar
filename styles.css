@@ -50,7 +50,7 @@ body {
 }
 
 .autum .today-cell>span {
-    background-color: brown;
+    background-color: rgb(165, 42, 42, 0.5)
 }
 
 .autum .calendar-container {
@@ -191,7 +191,6 @@ main {
 }
 
 .cell:hover .extra-break {
-
     display: none;
 }
 
@@ -246,7 +245,6 @@ main {
     width: 10px;
     height: 10px;
     /*background-color: rgba(0, 0, 255, 0.4)*/
-    ;
     /*background-color: goldenrod;*/
     border-radius: 20px;
     padding: 10px;
@@ -285,7 +283,6 @@ main {
 
 
 .day-wrap {
-
     height: 100% !important;
 }
 
@@ -340,7 +337,7 @@ main {
     background-color: white;
     padding: 1rem 1.5rem;
     width: 32rem;
-    height: 35rem;
+    height: 45rem;
     border-radius: 0.5rem;
 }
 
@@ -378,8 +375,6 @@ main {
 }
 
 /* modal event info*/
-
-
 .modal-event {
     position: fixed;
     left: 0;
@@ -396,7 +391,6 @@ main {
 }
 
 .modal-event-content {
-
     position: absolute;
     top: 50%;
     left: 50%;
@@ -432,7 +426,6 @@ main {
 }
 
 .remove-event>span {
-
     margin-bottom: 20px;
 }
 
@@ -500,14 +493,12 @@ main {
 }
 
 /*.modal-form {
-
     display: flex;
     flex-direction: column;
     justify-items: flex-start;
 
 }
 */
-
 .modal-form {
     position: relative;
 }
@@ -567,7 +558,6 @@ main {
 /* event styles depending on event type chosen */
 
 .default-event {
-
     border-radius: 10px;
     padding: 3px;
     font-size: 15px;
@@ -575,63 +565,48 @@ main {
     cursor: pointer;
 }
 
-
-
 .event-wrapper {
-
     width: 100%;
     margin-top: 9px;
 }
 
-
 .Meeting {
-
     background-color: rgba(0, 0, 255, 0.5);
 }
 
 .Meeting-event {
-
     color: rgba(0, 0, 255, 0.5);
 }
 
 .Personal {
-
     background-color: lightgreen;
 }
 
 .Personal-event {
-
     color: lightgreen;
 }
 
-
 .Study {
-
     background-color: yellow;
 }
 
 .Study-event {
-
     color: yellow;
 }
 
 .event-other {
-
     background-color: lightblue;
 }
 
 .General-event {
-
     color: lightBlue;
 }
 
 .Reminder {
-
     background-color: rgba(128, 0, 128, 0.5);
 }
 
 .Reminder-event {
-
     color: rgba(128, 0, 128, 0.5);
 }
 
@@ -648,7 +623,6 @@ main {
 TO DO : HIDE EVENTS  in the responsive media queries!! */
 
 @media (max-width: 1600px) {
-
     main {
         width: 1500px;
     }
@@ -665,7 +639,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 }
 
 @media (max-width: 1500px) {
-
     main {
         width: 1300px;
     }
@@ -676,7 +649,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 }
 
 @media (max-width: 1400px) {
-
     main {
         width: 1200px;
     }
@@ -687,7 +659,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 }
 
 @media (max-width: 1100px) {
-
     main {
         width: 900px;
     }
@@ -698,7 +669,6 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
 }
 
 @media (max-width: 850px) {
-
     main {
         width: 650px;
     }
@@ -711,10 +681,15 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         display: none;
     }
 
+    .default-event {
+        font-size: 12px;
+    }
+
+
+
 }
 
 @media (max-width: 600px) {
-
     main {
         width: 425px;
     }
@@ -735,32 +710,49 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         display: flex;
     }
 
+
+    .today-cell>span {
+        width: 5px;
+        height: 5px;
+        border-radius: 10px;
+        padding: 3px;
+
+    }
+
+    .default-event {
+
+        font-size: 9px;
+        padding: 2px;
+    }
+
 }
 
 @media (max-width: 500px) {
-
     .title {
         display: none;
     }
+
 }
 
 @media (max-height: 700px) {
-
     .calendar-container>div {
         height: 80px;
     }
 }
 
 @media (max-height: 550px) {
-
     .calendar-container>div {
         height: 40px;
+        font-size: 15px;
+    }
+
+    .default-event {
+
         font-size: 15px;
     }
 }
 
 @media (max-height: 450px) {
-
     .tooltip {
         display: none;
     }
@@ -782,6 +774,7 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         display: none;
     }
 
+
 }
 
 @media (max-height: 300px) {
@@ -790,5 +783,19 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
         height: 25px;
         font-size: 10px;
     }
+
+    .default-event {
+        font-size: 12px;
+        padding: 0;
+    }
+
+    .today-cell>span {
+        width: 5px;
+        height: 5px;
+        border-radius: 10px;
+        padding: 3px;
+
+    }
+
 
 }
