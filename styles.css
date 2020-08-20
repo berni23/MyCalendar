@@ -283,6 +283,26 @@ main {
     height: 32px;
 }
 
+
+.day-wrap {
+
+    height: 100% !important;
+}
+
+
+/*.window-events-list {
+
+    position: absolute;
+    border-radius: 5px;
+    border: 1px solid goldenrod;
+    padding: 10px;
+    width: 100px;
+    height: 100px;
+    z-index: 40;
+}
+*/
+
+
 /* modal event css*/
 
 /* 1 - we create a semi-transparent background color with a transition */
@@ -562,6 +582,7 @@ main {
     width: 100%;
     margin-top: 9px;
 }
+
 
 .Meeting {
 

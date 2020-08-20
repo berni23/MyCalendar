@@ -77,9 +77,9 @@ var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
-
+localStorage.clear();
 initializeCalendar();
-//localStorage.clear();
+
 
 function initializeCalendar() {
     setDate(today);
@@ -298,6 +298,7 @@ function buildMonth(month) {
                 eventContainer.appendChild(displayEvent(monthStored[i][j]));
                 eventContainer.insertAdjacentHTML('beforeend', '<br>');
             }
+            day.addEventListener("mouseover", windowEventList);
             day.appendChild(eventContainer);
             calendarContainer.appendChild(day);
         }
@@ -308,8 +309,11 @@ function buildMonth(month) {
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
             eventContainer.id = "day-" + (i + 1);
+
+            day.addEventListener("mouseover", windowEventList);
             day.appendChild(eventContainer);
             calendarContainer.appendChild(day);
+
         }
     }
     for (let i = 0; i < cellsLeft; i++)
@@ -350,7 +354,14 @@ function buildMonth(month) {
 
 function displayEvent(event) {
     var newElement = document.createElement("span");
-    newElement.textContent = event.title;
+    var date = new Date(event.dateIni);
+    console.log(date)
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    if (hours < 10) hours = "0" + hours;
+    if (minutes < 10) minutes = "0" + minutes
+
+    newElement.textContent = event.title + " - " + hours + ":" + minutes;
     newElement.classList.add("default-event");
     newElement.id = String(event.id);
     newElement.classList.add(event.eventType);
@@ -361,6 +372,53 @@ function displayEvent(event) {
 
     return newElement;
 }
+
+
+
+/* display events on mouseover*/
+
+var noWindow = true;
+
+function windowEventList(event) {
+
+    if (noWindow) {
+
+        var eventWrapper = document.getElementById("day-" + event.currentTarget.dataset.daynum);
+        if (eventWrapper.children.length > 7) {
+
+            noWindow = false;
+            event.currentTarget.classList.add("day-wrap");
+            event.currentTarget.removeEventListener("mouseover", windowEventList);
+            event.currentTarget.addEventListener("mouseout", removeEventList);
+
+        }
+    }
+}
+/*if (noWindow) {
+    var posLeft = event.currentTarget.offsetLeft;
+        var window = document.createElement("div");
+        window.classList.add("window-events-list");
+        window.style.marginLeft = posLeft;
+        window.marginTop = posTop;
+        window.innerHTML = event.target.innerHTML;
+window.dataset.wrapperId = event.target.id;
+window.addEventListener("mouseout", removeEventList);
+
+event.currentTarget.appendChild(window);
+noWindow = false;
+event.currentTarget.removeEventListener("mouseover", windowEventList);
+
+*/
+
+
+function removeEventList(event) {
+
+    noWindow = true;
+    event.currentTarget.classList.remove("day-wrap");
+    event.currentTarget.addEventListener("mouseover", windowEventList);
+    event.currentTarget.removeEventListener("mouseout", removeEventList);
+}
+
 /* navigate through months*/
 
 function previousMonth() {
@@ -403,24 +461,18 @@ function submitEvent() {
         toggleInfoWindow();
         setTimeout(toggleInfoWindow, 1500);
         if (name == displayedMonth.getMonthYear()) {
-
             var eventWrapper = document.querySelector("#day-" + newEvent.dateIni.getDate());
             eventWrapper.innerHTML = "";
             var events = monthArray[newEvent.dateIni.getDate() - 1];
-
             for (let i = 0; i < events.length; i++) {
                 if (eventWrapper.children.length == 8) {
                     eventWrapper.insertAdjacentHTML('beforeend', '<br class = "extra-break">');
                 }
                 eventWrapper.appendChild(displayEvent(events[i]));
+
                 eventWrapper.appendChild(document.createElement('br'));
-
-
             }
-
         }
-
-
         clearForm();
     }
     //let month = JSON.parse(localStorage.getItem(name));
@@ -452,19 +504,12 @@ function getMonthObject(name, event) {
     let monthNum = event.dateIni.getMonth();
     let month = JSON.parse(localStorage.getItem(name));
     let day = event.dateIni.getDate();
-
     if (!month) {
         month = populateMonth(getDaysInMonth(monthNum, year));
     }
     month[day - 1].push(event);
-    console.log('not sorted', month[day - 1])
     let daySorted = month[day - 1].sort(compareDateIni);
-
-    console.log('sorted', daySorted)
-
     month[day - 1] = daySorted;
-    console.log(month[day - 1])
-
     return month;
 }
 /* validate form*/
@@ -739,8 +784,6 @@ function isoToReadable(isoDate) {
     var day = date.getDate();
     if (month < 10) month = "0" + month;
     if (hours < 10) hours = "0" + hours;
-    //if (hours == "00") hours = "12";
-    //else if (hours == "12") hours = "00";
     if (minutes < 10) minutes = "0" + minutes;
     var stringDate = month + "/" + day + "/" + date.getFullYear() + "  at " + hours + ":" + minutes;
     return stringDate;
