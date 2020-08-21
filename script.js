@@ -393,6 +393,7 @@ function buildMonth(month) {
 
 function displayEvent(event) {
     var newElement = document.createElement("span");
+    newElement.classList.add("display-events");
     var date = new Date(event.dateIni);
     var hours = date.getHours();
     var minutes = date.getMinutes();
