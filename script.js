@@ -71,9 +71,6 @@ todaySpan.addEventListener("click", backToCurrentMonth);
 remindExpire.addEventListener("click", toggleExpire);
 hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
-
-
-
 /* Buglist
 
 
@@ -83,17 +80,15 @@ btnExpired.addEventListener("click", hideWarning);
 
 */
 
-//localStorage.clear()
-var today = new Date();
 
+var today = new Date();
 //today.setMonth(today.getMonth() + 1);
-var todayStored; // today's array of events retrieved from local storage
+//var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
 initializeCalendar();
-
 
 function initializeCalendar() {
     setDate(today);
@@ -160,33 +155,47 @@ function checkEvents(currentDay) {
     var dayNum = currentDay.getDate();
     var todayEvents = document.querySelectorAll("#day-" + dayNum + ">span");
     var monthUpdated = getMonthStored(currentMonth);
-    todayStored = monthUpdated[today.getDate() - 1];
+    var todayStored = monthUpdated[currentDay.getDate() - 1];
 
     for (let i = 0; i < todayStored.length; i++) {
-        let date = new Date(todayStored[i].dateIni);
+        var date = new Date(todayStored[i].dateIni);
+        // let reminder = todayStored[i].reminder ? new Date(date.getTime() - timerRemindMillis(todayStored[i].reminder)) : null;
 
-        console.log(todayStored[i].reminder);
-        let reminder = todayStored[i].reminder ? new Date(date.getTime() - timerRemindMillis(todayStored[i].reminder)) : null;
-        if (!todayStored[i].completed && currentDay > date && !todayStored[i].warning) {
+        var reminderMillis = date.getTime() - timerRemindMillis(todayStored[i].reminder);
+
+        /*let reminder;
+        let remindMillis = timerRemindMillis(todayStored[i].reminder);
+        console.log(todayStored[i]);
+        console.log("remindMilis", remindMillis);
+        if (remindMillis) {
+
+
+            reminder = date.getTime() - remindMillis;
+            console.log(reminder);
+        };*/
+
+        if (!todayStored[i].completed && currentDay.getTime() > date.getTime() && !todayStored[i].warning) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
             todayStored[i].warning = true;
             addWarning(todayStored[i], date);
             // display warning, display event in red
-        } else if (reminder && !todayStored[i].completed && currentDay > reminder) {
+        } else if (!todayStored[i].reminderDisplayed && !todayStored[i].completed && currentDay.getTime() > reminderMillis) {
+
+            console.log("inside reminder loop");
             addReminder(todayStored[i], date);
-            todayStored[i].reminder = null;
+            todayStored[i].reminderDisplayed = true;
             windowReminder = true;
         }
+        if (windoWarning) {
+            showWarning();
+        }
+        if (windowReminder || windoWarning) {
+            monthUpdated[dayNum - 1] = todayStored;
+            saveMonth(monthUpdated, currentMonth.getMonthYear());
+        }
     }
-    if (windoWarning) {
-        showWarning();
-    }
-    if (windowReminder || windoWarning) {
-        monthUpdated[dayNum - 1] = todayStored;
-        //console.log(monthUpdated);
-        saveMonth(monthUpdated, currentMonth.getMonthYear());
-    }
+
 }
 
 
@@ -196,26 +205,31 @@ function addReminder(event, date) {
     reminderWrapper.insertAdjacentHTML("afterbegin", `<div class = "info-reminder show-info"
     style = "position:relative"> <div> <span class = "iconify icon-clock" data-icon = "flat-color-icons:alarm-clock" data-inline = "false"> </span>
     <p> You have an upcoming event in <span class = "minutes-left"> ${event.reminder}</p></div>
-    <p> ${event.title}</p> <button id = btn-reminderComplete-${event.id} data-id = ${event.id}
-    data-monthyear = ${monthYear} data-day=${day}>Completed </button>
+    <p>${event.title}</p> <button id = 'btn-reminderComplete-${event.id}' data-id = '${event.id}'
+    data-monthyear = '${monthYear}' data-day='${day}'>Completed </button>
     <button id=btn-reminderClose-${event.id}> Close </button></div>`);
     document.getElementById(`btn-reminderComplete-${event.id}`).addEventListener("click", reminderComplete);
     document.getElementById(`btn-reminderClose-${event.id}`).addEventListener("click", reminderRemoved)
-    setTimeout(() => {
+    setTimeout(function () {
         var windowReminder = document.getElementById(`btn-reminderComplete-${event.id}`).parentElement
-        if (windowReminder) windowReminder.remove()
+        if (windowReminder) {
+            windowReminder.remove()
+        }
     }, 120000);
 }
 
 function reminderComplete(event) {
     // on 'event completed' clicked
-    eventCompleted(event);
-    reminderRemoved(event);
+    var id = event.target.dataset.id;
+    console.log(id);
+    var displayedEvent = document.getElementById(id)
+    displayedEvent.classList.add("event-completed");
+    eventCompleted(event.target, reminder = true);
+
 }
 
 function reminderRemoved(event) {
-    var windowReminder = document.getElementById(event.target.id).parentElement;
-    windowReminder.remove();
+    event.target.parentElement.remove();
 }
 
 
@@ -232,16 +246,18 @@ function addWarning(event, date) {
 function removeWarning(event) {
     if (event.target.checked) {
         var id = event.target.dataset.id;
-        document.getElementById(id).classList.remove("event-warning");
-        eventCompleted(event);
+        var displayedEvent = document.getElementById(id)
+        displayedEvent.classList.remove("event-warning");
+        displayedEvent.classList.add("event-completed");
+        eventCompleted(event.target);
         document.getElementById(event.target.id).parentElement.remove();
     }
 }
 
-function eventCompleted(event) {
-    var id = event.target.dataset.id;
-    var nameMonth = event.target.dataset.monthyear;
-    var day = event.target.dataset.day;
+function eventCompleted(event, reminder = false) {
+    var id = event.dataset.id;
+    var nameMonth = event.dataset.monthyear;
+    var day = event.dataset.day;
     var arrayMonth = JSON.parse(localStorage.getItem(nameMonth));
     var eventList = arrayMonth[day - 1];
     for (let i = 0; i < eventList.length; i++) {
@@ -252,6 +268,12 @@ function eventCompleted(event) {
     }
     arrayMonth[day - 1] = eventList;
     localStorage.setItem(nameMonth, JSON.stringify(arrayMonth));
+
+    if (reminder) {
+
+        reminderRemoved(event);
+
+    }
 }
 
 function monthYear(numMonthIni, yearIni) {
@@ -372,12 +394,10 @@ function buildMonth(month) {
 function displayEvent(event) {
     var newElement = document.createElement("span");
     var date = new Date(event.dateIni);
-    console.log(date)
     var hours = date.getHours();
     var minutes = date.getMinutes();
     if (hours < 10) hours = "0" + hours;
-    if (minutes < 10) minutes = "0" + minutes
-
+    if (minutes < 10) minutes = "0" + minutes;
     newElement.textContent = event.title + " - " + hours + ":" + minutes;
     newElement.classList.add("default-event");
     newElement.id = String(event.id);
@@ -385,6 +405,10 @@ function displayEvent(event) {
     newElement.addEventListener("click", showEventInfo);
     if (event.warning) {
         newElement.classList.add("event-warning");
+    }
+
+    if (event.completed) {
+        newElement.classList.add("event-completed");
     }
 
     return newElement;
@@ -470,7 +494,6 @@ function submitEvent() {
                     eventWrapper.insertAdjacentHTML('beforeend', '<br class = "extra-break">');
                 }
                 eventWrapper.appendChild(displayEvent(events[i]));
-
                 eventWrapper.appendChild(document.createElement('br'));
             }
         }
@@ -487,13 +510,17 @@ function createEvent() {
     var descriptionEvent = inputEventDescription.value;
     var initialDate = new Date(inputDateIni.value);
     var eventId = idEvent();
+    var Rdisplayed = true;
 
-    console.log(timerRemind.value)
+    if (timerRemind.value) Rdisplayed = false;
+
+    console.log("event creation, reminder:", timerRemind.value);
+
     return {
         id: eventId,
         title: titleEvent.trim(),
         dateIni: initialDate,
-        millis: initialDate.getTime(),
+        reminderDisplayed: Rdisplayed,
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
         reminder: timerRemind.value,
         description: descriptionEvent.trim(),
@@ -558,6 +585,9 @@ function validate() {
         }
     }
     if (remindExpire.checked) {
+
+        var dateRemind = new Date();
+        dateRemind.setTime(dateRemind.getTime() + timerRemindMillis(timerRemind.value));
         if (timerRemind.value == "") {
             remindExpire.parentElement.insertAdjacentHTML(
                 "beforeend",
@@ -566,8 +596,7 @@ function validate() {
             remindExpire.classList.add("error-input");
             validation = false;
 
-            var dateRemind = new Date();
-            dateRemind.setTime(dateRemind.getTime() + timerRemindMillis(timerRemind.value));
+
         } else if (dateRemind > dateIni) {
 
             timerRemind.parentElement.insertAdjacentHTML(
@@ -660,7 +689,7 @@ function showEventInfo(event) {
             if (storedDay[i].dateEnd) checkEndDate.textContent = isoToReadable(storedDay[i].dateEnd);
             else checkEndDate.textContent = "No end date provided";
             if (storedDay[i].reminder) checkReminder.textContent = storedDay[i].reminder + " in advance";
-            else checkReminder.textContent = "no reminder";
+            else checkReminder.textContent = "No reminder";
             if (storedDay[i].completed) checkStatus.textContent = "Completed";
             else checkStatus.textContent = "Pending";
         }
@@ -703,15 +732,18 @@ function removeEvent() {
     for (let i = 0; i < eventWrapper.children.length; i++) {
         if (eventWrapper.children[i].id == id) {
 
-            if (i == 6) {
-                eventWrapper.children[i + 2].remove();
-            }
-
+            eventWrapper.children[i + 1].remove();
             eventWrapper.children[i].remove();
-            eventWrapper.children[i - 1].remove();
 
         }
     }
+
+    if (eventWrapper.children.length == 9) {
+
+        document.querySelector("#day-" + day + " .extra-break").remove();
+
+    }
+
 
     hideEventInfo();
     hideAskRemove();
@@ -737,14 +769,6 @@ function saveCheckEvent() {
     hideEventInfo();
 }
 
-/*var modalCheckEvent = document.querySelector(".modal-check-event");
-var checkTitle = document.getElementById("check-title");
-var checkEventType = document.getElementById("check-event-type");
-var checkDate = document.getElementById("check-date");
-var checkEndDate = document.getElementById("check-end-date");
-var checkDescription = document.getElementById("check-description");
-
-*/
 
 /*--------------------------------------
             UTILS

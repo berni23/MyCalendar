@@ -374,6 +374,12 @@ main {
     background-color: darkgray;
 }
 
+
+.event-completed {
+
+    opacity: 0.5;
+}
+
 /* modal event info*/
 .modal-event {
     position: fixed;
