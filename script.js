@@ -1,22 +1,12 @@
-//global vars
-
-var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var daysWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-var daysWeekShort = daysWeek.map(el => el.slice(0, 3));
-var monthsShort = months.map(el => el.slice(0, 3));
-
+// main containers and buttons
 var mainHeader = document.querySelector(".main-header");
 var mainContainer = document.querySelector("main");
-var summerIcon = document.getElementById("summer-icon");
-var springIcon = document.getElementById("spring-icon");
-var autumIcon = document.getElementById("autum-icon");
-var winterIcon = document.getElementById("winter-icon");
 var calendarContainer = document.querySelector(".calendar-container");
 var stringDays = document.querySelector(".string-days");
 var todaySpan = document.querySelector(".today-caption");
 var todayTooltiptext = document.querySelector(".tooltiptext");
-var btnModal = document.getElementById("add-event");
-const totalCells = 42;
+var monthLabel = document.querySelector(".month-year");
+
 // event form
 var inputTitle = document.getElementById("input-title");
 var inputDateIni = document.getElementById("input-date-ini");
@@ -28,17 +18,23 @@ var inputEventDescription = document.getElementById("event-description");
 var inputEvent = document.getElementById("event-type");
 var btnCreateEvent = document.getElementById("create-event");
 var btnCancelEvent = document.getElementById("cancel-event");
-var monthLabel = document.querySelector(".month-year");
-var infoWindow = document.querySelector(".info-window");
+
+//Navigate through months
 var btnPrevious = document.querySelector(".previous");
 var btnNext = document.querySelector(".next");
+
+//Modal for event creation
+var btnModal = document.getElementById("add-event");
 var modal = document.querySelector(".modal-create-form");
 var btnCloseModal = document.getElementById("close-modal");
-var btnCloseCheckEvent = document.getElementById("close-check-event");
+
+//On event expired
 var eventExpired = document.querySelector(".event-expired");
 var listExpired = document.getElementById("list-expired");
 var btnExpired = document.getElementById("button-expired");
-var reminderWrapper = document.querySelector(".container-reminder");
+
+//Info displayed on event clicked
+var infoWindow = document.querySelector(".info-window");
 var modalCheckEvent = document.querySelector(".modal-check-event");
 var checkTitle = document.getElementById("check-title");
 var checkEventType = document.getElementById("check-event-type");
@@ -47,13 +43,19 @@ var checkEndDate = document.getElementById("check-end-date");
 var checkReminder = document.getElementById("check-reminder");
 var checkStatus = document.getElementById("check-status");
 var checkDescription = document.getElementById("check-description");
-var btnRemoveEvent = document.getElementById("remove-event");
 var btnSaveCheckEvent = document.getElementById("save-check-event");
+var btnCloseCheckEvent = document.getElementById("close-check-event");
 
+//Remove event
+var btnRemoveEvent = document.getElementById("remove-event");
 var windowRemoveEvent = document.querySelector(".remove-window")
 var btnRemoveContinue = document.getElementById("remove-continue");
 var btnRemoveCancel = document.getElementById("remove-cancel");
 
+//Reminder
+var reminderWrapper = document.querySelector(".container-reminder");
+
+//Calendar options and functionalities
 btnRemoveEvent.addEventListener("click", askRemove);
 btnRemoveContinue.addEventListener("click", removeEvent);
 btnRemoveCancel.addEventListener("click", hideAskRemove);
@@ -71,37 +73,39 @@ todaySpan.addEventListener("click", backToCurrentMonth);
 remindExpire.addEventListener("click", toggleExpire);
 hasEndDate.addEventListener("click", toggleEndDate);
 btnExpired.addEventListener("click", hideWarning);
-/* Buglist
 
-
-1 hour reminder does not work
-2- creating event near actual hour fails sometimes
-
-
-*/
-
-
+//Global vars
 var today = new Date();
-//today.setMonth(today.getMonth() + 1);
-//var todayStored; // today's array of events retrieved from local storage
 var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var daysWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var daysWeekShort = daysWeek.map(el => el.slice(0, 3));
+var monthsShort = months.map(el => el.slice(0, 3));
+const totalCells = 42;
+
+
+/*---------------------
+INITIALIZE CALENDAR
+----------------------*/
+
 initializeCalendar();
 
 function initializeCalendar() {
     setDate(today);
     buildMonth(displayedMonth);
     checkEventsMonth(getMonthStored(currentMonth));
-    timerCheckEvents = setInterval(updateToday, 10000); // to be set at 30 seconds
-    // check current events and update "today"
-
+    timerCheckEvents = setInterval(updateToday, 10000);
 }
+
+/*-----------------------------------------------------------------------
+Update current day and check for changes made by the user every 10 seconds
+-------------------------------------------------------------------------*/
 
 function updateToday() {
     newToday = new Date();
-    // newToday.setMonth(updateToday.getMonth() + 1)
     checkEvents(newToday);
     if (newToday.getDate() != today.getDate()) {
         setDate(newToday);
@@ -113,41 +117,9 @@ function updateToday() {
     }
 }
 
-
-/*localStorage.setItem(currentMonth.getMonthYear(), JSON.stringify(currentMonthStored))*/
-function getMonthStored(month) {
-    var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
-    if (!monthStored) {
-        monthStored = populateMonth(month.daysInMonth());
-    }
-    return monthStored;
-
-}
-
-function saveMonth(month, name) {
-    localStorage.setItem(name, JSON.stringify(month));
-}
-
-function checkEventsMonth(monthStored) {
-    var windoWarning = false;
-    for (let i = 0; i < today.getDate(); i++) {
-        var numDay = i + 1;
-        var todayEvents = document.querySelectorAll("#day-" + numDay + ">span");
-        for (let j = 0; j < monthStored[i].length; j++) {
-            var date = new Date(monthStored[i][j].dateIni);
-            if (date.getTime() < today.getTime() && !monthStored[i][j].completed) {
-                monthStored[i][j].warning = true;
-                addWarning(monthStored[i][j], date); // only adding the warning to the html
-                todayEvents[j].classList.add("event-warning");
-                windoWarning = true;
-            }
-        }
-    }
-    if (windoWarning) {
-        showWarning()
-        saveMonth(monthStored);
-    }
-}
+/*-----------------------------------------------------------------------------------------------
+check each event on current day to see if it has expired or if the reminder should be activated
+--------------------------------------------------------------------------------------------------*/
 
 function checkEvents(currentDay) {
     var windoWarning = false;
@@ -159,21 +131,7 @@ function checkEvents(currentDay) {
 
     for (let i = 0; i < todayStored.length; i++) {
         var date = new Date(todayStored[i].dateIni);
-        // let reminder = todayStored[i].reminder ? new Date(date.getTime() - timerRemindMillis(todayStored[i].reminder)) : null;
-
         var reminderMillis = date.getTime() - timerRemindMillis(todayStored[i].reminder);
-
-        /*let reminder;
-        let remindMillis = timerRemindMillis(todayStored[i].reminder);
-        console.log(todayStored[i]);
-        console.log("remindMilis", remindMillis);
-        if (remindMillis) {
-
-
-            reminder = date.getTime() - remindMillis;
-            console.log(reminder);
-        };*/
-
         if (!todayStored[i].completed && currentDay.getTime() > date.getTime() && !todayStored[i].warning) {
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
@@ -198,88 +156,45 @@ function checkEvents(currentDay) {
 
 }
 
+/* --------------------------------------------------------------
 
-function addReminder(event, date) {
-    var monthYear = months[date.getMonth()] + date.getFullYear();
-    var day = date.getDate();
-    reminderWrapper.insertAdjacentHTML("afterbegin", `<div class = "info-reminder show-info"
-    style = "position:relative"> <div> <span class = "iconify icon-clock" data-icon = "flat-color-icons:alarm-clock" data-inline = "false"> </span>
-    <p> You have an upcoming event in <span class = "minutes-left"> ${event.reminder}</p></div>
-    <p>${event.title}</p> <button id = 'btn-reminderComplete-${event.id}' data-id = '${event.id}'
-    data-monthyear = '${monthYear}' data-day='${day}'>Completed </button>
-    <button id=btn-reminderClose-${event.id}> Close </button></div>`);
-    document.getElementById(`btn-reminderComplete-${event.id}`).addEventListener("click", reminderComplete);
-    document.getElementById(`btn-reminderClose-${event.id}`).addEventListener("click", reminderRemoved)
-    setTimeout(function () {
-        var windowReminder = document.getElementById(`btn-reminderComplete-${event.id}`).parentElement
-        if (windowReminder) {
-            windowReminder.remove()
-        }
-    }, 120000);
-}
+Function only called when user opens or refreshes the calendar,
+which checks the status of the events from the beginning of the month
 
-function reminderComplete(event) {
-    // on 'event completed' clicked
-    var id = event.target.dataset.id;
-    console.log(id);
-    var displayedEvent = document.getElementById(id)
-    displayedEvent.classList.add("event-completed");
-    eventCompleted(event.target, reminder = true);
+---------------------------------------------------------------- */
 
-}
-
-function reminderRemoved(event) {
-    event.target.parentElement.remove();
-}
-
-
-// TODO( create class "event-completed, where the brightness is lower")
-function addWarning(event, date) {
-    //console.log(date.getMonth())
-    var monthYear = months[date.getMonth()] + date.getFullYear();
-    var day = date.getDate();
-    listExpired.insertAdjacentHTML("afterbegin", `<li ><span>${event.title}</span> <input id = warning-${event.id} data-id =${event.id}
-    data-monthyear=${monthYear} data-day=${day} type = "checkbox" class ="checkbox-warning"><br></li> `);
-    document.getElementById(`warning-${event.id}`).addEventListener("click", removeWarning);
-}
-
-function removeWarning(event) {
-    if (event.target.checked) {
-        var id = event.target.dataset.id;
-        var displayedEvent = document.getElementById(id)
-        displayedEvent.classList.remove("event-warning");
-        displayedEvent.classList.add("event-completed");
-        eventCompleted(event.target);
-        document.getElementById(event.target.id).parentElement.remove();
-    }
-}
-
-function eventCompleted(event, reminder = false) {
-    var id = event.dataset.id;
-    var nameMonth = event.dataset.monthyear;
-    var day = event.dataset.day;
-    var arrayMonth = JSON.parse(localStorage.getItem(nameMonth));
-    var eventList = arrayMonth[day - 1];
-    for (let i = 0; i < eventList.length; i++) {
-        if (eventList[i].id == id) {
-            eventList[i].completed = true;
-            eventList[i].warning = false;
+function checkEventsMonth(monthStored) {
+    var windoWarning = false;
+    for (let i = 0; i < today.getDate(); i++) {
+        var numDay = i + 1;
+        var todayEvents = document.querySelectorAll("#day-" + numDay + ">span");
+        for (let j = 0; j < monthStored[i].length; j++) {
+            var date = new Date(monthStored[i][j].dateIni);
+            if (date.getTime() < today.getTime() && !monthStored[i][j].completed) {
+                monthStored[i][j].warning = true;
+                addWarning(monthStored[i][j], date); // only adding the warning to the html
+                todayEvents[j].classList.add("event-warning");
+                windoWarning = true;
+            }
         }
     }
-    arrayMonth[day - 1] = eventList;
-    localStorage.setItem(nameMonth, JSON.stringify(arrayMonth));
-
-    if (reminder) {
-
-        reminderRemoved(event);
-
+    if (windoWarning) {
+        showWarning()
+        saveMonth(monthStored);
     }
 }
+
+/* ----------------------------------------------
+
+LOGIC FOR BUILDING THE CALENDAR
+
+-----------------------------------------------*/
+
+// Storage  logic  and data retrieve based on 'month-year' objects. For instance August2020,September2020,....
 
 function monthYear(numMonthIni, yearIni) {
     var monthObject = new Date(yearIni, numMonthIni);
     return {
-        //   monthObject,
         getMonthYear() {
             return months[monthObject.getMonth()] + monthObject.getFullYear();
         },
@@ -306,11 +221,15 @@ function monthYear(numMonthIni, yearIni) {
         }
     }
 }
-// set current date
+
+// Setting one of the header spans as the current day, including a tooltip with more precise info about the day and monthç
+
 function setDate(d) {
     todaySpan.textContent = daysWeekShort[d.getDay()] + ", " + d.getDate() + " " + monthsShort[d.getMonth()];
     todayTooltiptext.textContent = daysWeek[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 }
+
+// Actual function in charge of building the month in the html when a 'monthYear' object is given to it
 
 function buildMonth(month) {
     clearCalendar();
@@ -326,7 +245,6 @@ function buildMonth(month) {
     if (monthStored) {
         for (let i = 0; i < numCells; i++) {
             day = createDayContainer(i);
-            //monthStored[i].sort(compareDateIni);
             var eventContainer = document.createElement("div");
             eventContainer.classList.add("event-wrapper");
             eventContainer.id = "day-" + (i + 1);
@@ -378,7 +296,8 @@ function buildMonth(month) {
         return day;
     }
 
-    // populate calendar days
+    // Populate calendar days
+
     function seasonClass(numMonth) {
         mainHeader.classList.remove(season);
         mainContainer.classList.remove(season);
@@ -390,6 +309,8 @@ function buildMonth(month) {
         mainContainer.classList.add(season);
     }
 }
+
+// Function in charge of displaying a single event on the calendar based on the 'createEvent' object
 
 function displayEvent(event) {
     var newElement = document.createElement("span");
@@ -411,13 +332,99 @@ function displayEvent(event) {
     if (event.completed) {
         newElement.classList.add("event-completed");
     }
-
     return newElement;
 }
 
+/* --------------------------------
+REMINDER LOGIC
+----------------------------------*/
 
+//Add a reminder in the reminder wrapper. function call  in the 'checkEvents' function .
+function addReminder(event, date) {
+    var monthYear = months[date.getMonth()] + date.getFullYear();
+    var day = date.getDate();
+    reminderWrapper.insertAdjacentHTML("afterbegin", `<div class = "info-reminder show-info"
+    style = "position:relative"> <div> <span class = "iconify icon-clock" data-icon = "flat-color-icons:alarm-clock" data-inline = "false"> </span>
+    <p> You have an upcoming event in <span class = "minutes-left"> ${event.reminder}</p></div>
+    <p>${event.title}</p> <button id = 'btn-reminderComplete-${event.id}' data-id = '${event.id}'
+    data-monthyear = '${monthYear}' data-day='${day}'>Completed </button>
+    <button id=btn-reminderClose-${event.id}> Close </button></div>`);
+    document.getElementById(`btn-reminderComplete-${event.id}`).addEventListener("click", reminderComplete);
+    document.getElementById(`btn-reminderClose-${event.id}`).addEventListener("click", reminderRemoved)
+    setTimeout(function () {
+        var windowReminder = document.getElementById(`btn-reminderComplete-${event.id}`).parentElement
+        if (windowReminder) {
+            windowReminder.remove()
+        }
+    }, 120000);
+}
 
-/* display events on mouseover*/
+/* If the user clicks on 'complete' in the reminder, the event status changes to 'complete',
+deleting the remind message and updating the object in the local storage. */
+
+function reminderComplete(event) {
+    // on 'event completed' clicked
+    var id = event.target.dataset.id;
+    console.log(id);
+    var displayedEvent = document.getElementById(id)
+    displayedEvent.classList.add("event-completed");
+    eventCompleted(event.target, reminder = true);
+
+}
+
+function reminderRemoved(event) {
+    event.target.parentElement.remove();
+}
+
+/*------------------------------------
+EVENT EXPIRED, WARNING LOGIC
+---------------------------------------*/
+
+function addWarning(event, date) {
+    //console.log(date.getMonth())
+    var monthYear = months[date.getMonth()] + date.getFullYear();
+    var day = date.getDate();
+    listExpired.insertAdjacentHTML("afterbegin", `<li ><span>${event.title}</span> <input id = warning-${event.id} data-id =${event.id}
+    data-monthyear=${monthYear} data-day=${day} type = "checkbox" class ="checkbox-warning"><br></li> `);
+    document.getElementById(`warning-${event.id}`).addEventListener("click", removeWarning);
+}
+
+function removeWarning(event) {
+    if (event.target.checked) {
+        var id = event.target.dataset.id;
+        var displayedEvent = document.getElementById(id)
+        displayedEvent.classList.remove("event-warning");
+        displayedEvent.classList.add("event-completed");
+        eventCompleted(event.target);
+        document.getElementById(event.target.id).parentElement.remove();
+    }
+}
+
+//Routine for event completed, both used by warning or reminders
+
+function eventCompleted(event, reminder = false) {
+    var id = event.dataset.id;
+    var nameMonth = event.dataset.monthyear;
+    var day = event.dataset.day;
+    var arrayMonth = JSON.parse(localStorage.getItem(nameMonth));
+    var eventList = arrayMonth[day - 1];
+    for (let i = 0; i < eventList.length; i++) {
+        if (eventList[i].id == id) {
+            eventList[i].completed = true;
+            eventList[i].warning = false;
+        }
+    }
+    arrayMonth[day - 1] = eventList;
+    localStorage.setItem(nameMonth, JSON.stringify(arrayMonth));
+
+    if (reminder) {
+        reminderRemoved(event);
+
+    }
+}
+
+/* If there are more than four events in one day  ,only the first four will be displayed.
+ If we hover on the event container, all of the events will be displayed */
 
 var noWindow = true;
 
@@ -437,6 +444,8 @@ function windowEventList(event) {
     }
 }
 
+// remove event list if we do not hover the day any more
+
 function removeEventList(event) {
 
     noWindow = true;
@@ -445,7 +454,9 @@ function removeEventList(event) {
     event.currentTarget.removeEventListener("mouseout", removeEventList);
 }
 
-/* navigate through months*/
+/* ---------------------------
+NAVIGATION THROUGH MONTHS
+-----------------------------------*/
 
 function previousMonth() {
     displayedMonth.addMonth(-1);
@@ -464,17 +475,13 @@ function backToCurrentMonth() {
     }
 }
 
-/*function handleWarning() {
-    var warningEvents = document.querySelectorAll(" .event-expired li");
-    for (let i = 0; i < warningEvents.length; i++) {}
-}
+/*
+------------------------------------
+EVENT CREATION AND EVENT VALIDATION
+-----------------------------------
 */
 
-/*
--------------------------
-Form, validation function
---------------------------
-*/
+// function called when user creates an event after having filled the event form
 
 function submitEvent() {
     if (validate()) {
@@ -501,10 +508,9 @@ function submitEvent() {
         clearForm();
         clearErrors();
     }
-    //let month = JSON.parse(localStorage.getItem(name));
 }
 
-/* create event */
+// create event object
 function createEvent() {
     var currentEventType = inputEvent.value ? inputEvent.value : "event-other";
     var titleEvent = inputTitle.value;
@@ -512,11 +518,8 @@ function createEvent() {
     var initialDate = new Date(inputDateIni.value);
     var eventId = idEvent();
     var Rdisplayed = true;
-
     if (timerRemind.value) Rdisplayed = false;
-
     console.log("event creation, reminder:", timerRemind.value);
-
     return {
         id: eventId,
         title: titleEvent.trim(),
@@ -531,6 +534,9 @@ function createEvent() {
     }
 }
 
+/* function for getting the month from localstorage if it exists, and if not ( first time creating an event in a given month)
+create the month and store it */
+
 function getMonthObject(name, event) {
     let year = event.dateIni.getFullYear();
     let monthNum = event.dateIni.getMonth();
@@ -544,7 +550,11 @@ function getMonthObject(name, event) {
     month[day - 1] = daySorted;
     return month;
 }
-/* validate form*/
+
+/*--------------------------------------
+VALIDATION LOGIC
+-----------------------------------------*/
+
 function validate() {
     let validation = true;
     let dateIni = new Date(inputDateIni.value);
@@ -586,7 +596,6 @@ function validate() {
         }
     }
     if (remindExpire.checked) {
-
         var dateRemind = new Date();
         dateRemind.setTime(dateRemind.getTime() + timerRemindMillis(timerRemind.value));
         if (timerRemind.value == "") {
@@ -599,14 +608,12 @@ function validate() {
 
 
         } else if (dateRemind > dateIni) {
-
             timerRemind.parentElement.insertAdjacentHTML(
                 "beforeend",
                 "<div class='error-msg' style ='margin-top:25px; margin-right:5px;'><p>The event is scheduled sooner than in " + timerRemind.value + "</p></div>"
             );
             timerRemind.classList.add("error-input");
             validation = false;
-
         }
     }
 
@@ -621,19 +628,18 @@ function validate() {
     return validation; // true if validation passed, else false
 }
 
+/* ---------------------------------------
 
+Show and hide windows, toggle functionality
 
-/* modal  logic */
+--------------------------------------*/
 
 function cancelEvent() {
-
-
     clearErrors();
     toggleModal();
 }
 
 function toggleModal() {
-
     modal.classList.toggle("show-modal");
 }
 
@@ -645,7 +651,6 @@ function toggleModalDay(event) {
         var localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, -8);
         inputDateIni.value = localISOTime;
     }
-
 }
 
 function toggleInfoWindow() {
@@ -666,9 +671,11 @@ function windowOnClick(event) {
 
 }
 
+/* ------------------------------------------
 
+Populate fields with stored information, on event clicked
 
-/* Modal on event clicked*/
+--------------------------------------------------*/
 
 function showEventInfo(event) {
     modalCheckEvent.classList.add("show-info");
@@ -697,7 +704,6 @@ function showEventInfo(event) {
     }
 }
 
-
 function hideEventInfo() {
     modalCheckEvent.classList.remove("show-info");
 }
@@ -706,14 +712,14 @@ function askRemove() {
     showAskRemove();
 }
 
-function removeEvent() {
+/* Remove an event*/
 
+function removeEvent() {
     hideEventInfo();
     hideAskRemove();
     toggleInfoWindow();
     infoWindow.textContent = "Event succesfully removed";
     setTimeout(toggleInfoWindow, 1500);
-
     var id = checkTitle.dataset.id;
     var day = checkTitle.dataset.day;
     var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
@@ -732,26 +738,25 @@ function removeEvent() {
     var eventWrapper = document.getElementById("day-" + day);
     for (let i = 0; i < eventWrapper.children.length; i++) {
         if (eventWrapper.children[i].id == id) {
-
             eventWrapper.children[i + 1].remove();
             eventWrapper.children[i].remove();
-
         }
     }
-
     if (eventWrapper.children.length == 9) {
-
         document.querySelector("#day-" + day + " .extra-break").remove();
-
     }
-
-
     hideEventInfo();
     hideAskRemove();
     toggleInfoWindow();
     infoWindow.textContent = "Event succesfully removed";
     setTimeout(toggleInfoWindow, 1500);
 }
+
+/*----------------------------
+
+Save updated information we have changed from the event ( only the description)
+
+----------------------------*/
 
 function saveCheckEvent() {
     var description = checkDescription.textContent;
@@ -770,12 +775,29 @@ function saveCheckEvent() {
     hideEventInfo();
 }
 
-
 /*--------------------------------------
             UTILS
 ------------------------------------*/
 
-/* clear functions*/
+/*------------------------------------
+Deal with the local storage
+---------------------------------------------*/
+
+function getMonthStored(month) {
+    var monthStored = JSON.parse(localStorage.getItem(month.getMonthYear()));
+    if (!monthStored) {
+        monthStored = populateMonth(month.daysInMonth());
+    }
+    return monthStored;
+}
+
+function saveMonth(month, name) {
+    localStorage.setItem(name, JSON.stringify(month));
+}
+
+/*---------------------------
+Clear functions for the calendar, the form inputs and the form errors
+----------------------------*/
 
 function clearCalendar() {
     calendarContainer.textContent = "";
@@ -798,6 +820,8 @@ function clearErrors() {
         div.classList.remove("error-input");
     }
 }
+
+/* translate reminder strings into milliseconds*/
 
 function timerRemindMillis(value) {
     var millis = 300000; // five min
@@ -828,10 +852,14 @@ function timerRemindMillis(value) {
     return millis;
 }
 
+/* get the name  of the monthYear object corresponding to a given event ( for local storage update or retrieve)*/
+
 function monthNameEvent(event) {
     let monthNum = event.dateIni.getMonth();
     return months[monthNum] + event.dateIni.getFullYear();
 }
+
+/* switch  date from iso format to human readable (month/day/yeat at hours:minutes ) */
 
 function isoToReadable(isoDate) {
     var date = new Date(isoDate);
@@ -846,6 +874,8 @@ function isoToReadable(isoDate) {
     return stringDate;
 }
 
+/* handle escape key to close modals*/
+
 function handleKeyDown(event) {
     if (event.keyCode === 27) { // hide modal on esc key pressed
         modal.classList.remove("show-modal");
@@ -853,27 +883,36 @@ function handleKeyDown(event) {
     }
 }
 
+/* number of days in a month*/
 function getDaysInMonth(numMonth, year) {
     //Day 0 is the last day in the previous month
     return new Date(year, numMonth + 1, 0).getDate()
 }
 
+/* first day of the month*/
 function firstDayMonth(month, year) {
     return new Date(year, month, 1).getDay();
 }
 
+/* toggle for enabling user to set an end date in case the ' end date' checkbox is checked*/
 function toggleEndDate() {
     inputDateEnd.parentElement.classList.toggle("hidden");
 }
+
+/* toggle for enabling user to set reminder time in case the 'timer-remind' checkbox is checked*/
 
 function toggleExpire() {
     timerRemind.parentElement.classList.toggle("hidden");
 }
 
+/* if user decides to remove an event, he/she is asked once again to confirm the operation ( as  such action can not be reversed)*/
+
 function showAskRemove() {
     windowRemoveEvent.classList.add("show-info");
     windowRemoveEvent.style.zIndex = 5;
 }
+
+/* cancel the removing operation */
 
 function hideAskRemove() {
 
@@ -881,14 +920,12 @@ function hideAskRemove() {
     windowRemoveEvent.style.zIndex = 1;
 }
 
+/* create a random id for an event*/
 function idEvent() {
     return Math.floor(Math.random() * Math.floor(10000000)); // 1 in ten millions
 }
 
-function parseIsoString(s) {
-    var b = s.split(/\D+/);
-    return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
-}
+/* populare an empty month with as many sub-arrays as days in it*/
 
 function populateMonth(len) {
     var array = [];
@@ -897,7 +934,7 @@ function populateMonth(len) {
     }
     return array;
 }
-
+/* sorting events based on their initial date*/
 
 function compareDateIni(event1, event2) {
 
@@ -907,14 +944,5 @@ function compareDateIni(event1, event2) {
     if (event1.millis > event2.millis) {
         return 1;
     }
-
     return 0;
-}
-
-
-function sortEventsDay(events) {
-
-    return events.sort(compareDateIni);
-
-
 }
