@@ -93,6 +93,8 @@ INITIALIZE CALENDAR
 
 initializeCalendar();
 
+localStorage.clear();
+
 function initializeCalendar() {
     setDate(today);
     buildMonth(displayedMonth);
@@ -524,6 +526,7 @@ function createEvent() {
         id: eventId,
         title: titleEvent.trim(),
         dateIni: initialDate,
+        millis: initialDate.getTime(),
         reminderDisplayed: Rdisplayed,
         dateEnd: inputDateEnd.value ? new Date(inputDateEnd.value) : null,
         reminder: timerRemind.value,
