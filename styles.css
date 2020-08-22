@@ -292,6 +292,8 @@ Days
     display: none;
 }
 
+
+
 /*current day*/
 
 .today-caption {
@@ -312,6 +314,12 @@ Days
     height: 100% !important;
 }
 
+.event-wrapper {
+    width: 100%;
+    margin-top: 9px;
+}
+
+
 /* -------------------------------
 Modal
 -----------------------------*/
@@ -319,8 +327,9 @@ Modal
 
 /*Semi-transparent background color with a transition */
 
-.modal,
-.modal-event {
+
+/* modal-event*/
+.modal {
     position: fixed;
     left: 0;
     top: 0;
@@ -333,8 +342,20 @@ Modal
     transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
 }
 
+/* displayed the modal*/
+
+.show-modal,
+.show-info {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+    z-index: 2;
+}
+
+
 /* modal content -> for event creation*/
-/* modal content -> when checking an event already created*/
+/* modal-check-content -> when checking an event already created*/
 .modal-content,
 .modal-check-content {
     position: absolute;
@@ -386,12 +407,12 @@ Modal
 }
 
 
+/* event displayed in a lower opacity when it has been expired or completed*/
 .event-completed {
     opacity: 0.5;
 }
 
 /* modal event info*/
-
 
 .modal-event-content {
     position: absolute;
@@ -423,6 +444,8 @@ Modal
     transition: visibility 0s linear 0.25s, opacity 0.25s linear 0s, transform 0.25s;
 }
 
+
+
 .remove-event>span {
     margin-bottom: 20px;
 }
@@ -453,6 +476,8 @@ Modal
     padding: 5px 0;
 }
 
+/* styles for reminder window*/
+
 .container-reminder>div {
     margin: 10px;
 }
@@ -471,18 +496,11 @@ Modal
     margin-top: 10px;
 }
 
-.show-modal,
-.show-info {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1.0);
-    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
-    z-index: 2;
-}
-
 .checkbox-warning {
     margin: 5px 0 0 25px;
 }
+
+/* Form for event creation*/
 
 .button-form {
     margin: 10px;
@@ -525,6 +543,9 @@ Modal
     text-align: start;
 }
 
+
+/* form error */
+
 .error-input {
     color: red;
     border: 2px solid red;
@@ -544,13 +565,12 @@ Modal
 }
 
 .error-msg p {
-    /* padding-top: 0.4rem;
-    padding-left: 0.2rem;
-    */
     margin: auto;
 }
 
-/* event styles depending on event type chosen */
+/* -----------------------------------------
+Event styles depending on event type chosen
+--------------------------------------- */
 
 .default-event {
     border-radius: 10px;
@@ -560,10 +580,6 @@ Modal
     cursor: pointer;
 }
 
-.event-wrapper {
-    width: 100%;
-    margin-top: 9px;
-}
 
 .Meeting {
     background-color: rgba(0, 0, 255, 0.5);
@@ -609,13 +625,12 @@ Modal
     background-color: red;
 }
 
-.hidden {
-    display: none !important;
-}
 
-/* responsiveness
 
-TO DO : HIDE EVENTS  in the responsive media queries!! */
+/*-----------------------------
+ Responsiveness
+-------------------------------*/
+
 
 @media (max-width: 1600px) {
     main {
@@ -793,4 +808,11 @@ TO DO : HIDE EVENTS  in the responsive media queries!! */
     }
 
 
+}
+
+
+/* class hidden*/
+
+.hidden {
+    display: none !important;
 }
