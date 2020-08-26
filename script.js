@@ -428,12 +428,9 @@ function eventCompleted(event, reminder = false) {
 var noWindow = true;
 
 function windowEventList(event) {
-
     if (noWindow) {
-
         var eventWrapper = document.getElementById("day-" + event.currentTarget.dataset.daynum);
         if (eventWrapper.children.length > 8) {
-
             noWindow = false;
             event.currentTarget.classList.add("day-wrap");
             event.currentTarget.removeEventListener("mouseover", windowEventList);
@@ -446,7 +443,6 @@ function windowEventList(event) {
 // remove event list if we do not hover the day any more
 
 function removeEventList(event) {
-
     noWindow = true;
     event.currentTarget.classList.remove("day-wrap");
     event.currentTarget.addEventListener("mouseover", windowEventList);
@@ -606,7 +602,7 @@ function validate() {
             validation = false;
 
 
-        } else if (dateRemind > dateIni) {
+        } else if (dateRemind.getTime() > dateIni.getTime()) {
             timerRemind.parentElement.insertAdjacentHTML(
                 "beforeend",
                 "<div class='error-msg' style ='margin-top:25px; margin-right:5px;'><p>The event is scheduled sooner than in " + timerRemind.value + "</p></div>"
