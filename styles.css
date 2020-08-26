@@ -385,13 +385,11 @@ Modal
     background-color: darkgray;
 }
 
-
 .event-completed {
     opacity: 0.5;
 }
 
 /* modal event info*/
-
 
 .modal-event-content {
     position: absolute;
@@ -544,9 +542,6 @@ Modal
 }
 
 .error-msg p {
-    /* padding-top: 0.4rem;
-    padding-left: 0.2rem;
-    */
     margin: auto;
 }
 
@@ -613,9 +608,11 @@ Modal
     display: none !important;
 }
 
-/* responsiveness
+/* ---------------------------------
+Responsiveness
+-----------------------------------*/
 
-TO DO : HIDE EVENTS  in the responsive media queries!! */
+
 
 @media (max-width: 1600px) {
     main {

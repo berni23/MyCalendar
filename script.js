@@ -93,7 +93,6 @@ INITIALIZE CALENDAR
 
 initializeCalendar();
 
-localStorage.clear();
 
 function initializeCalendar() {
     setDate(today);
@@ -135,6 +134,7 @@ function checkEvents(currentDay) {
         var date = new Date(todayStored[i].dateIni);
         var reminderMillis = date.getTime() - timerRemindMillis(todayStored[i].reminder);
         if (!todayStored[i].completed && currentDay.getTime() > date.getTime() && !todayStored[i].warning) {
+
             todayEvents[i].classList.add("event-warning"); // if we are on another month, this line of code will simply do nothing
             windoWarning = true;
             todayStored[i].warning = true;
@@ -142,7 +142,6 @@ function checkEvents(currentDay) {
             // display warning, display event in red
         } else if (!todayStored[i].reminderDisplayed && !todayStored[i].completed && currentDay.getTime() > reminderMillis) {
 
-            console.log("inside reminder loop");
             addReminder(todayStored[i], date);
             todayStored[i].reminderDisplayed = true;
             windowReminder = true;
@@ -367,7 +366,6 @@ deleting the remind message and updating the object in the local storage. */
 function reminderComplete(event) {
     // on 'event completed' clicked
     var id = event.target.dataset.id;
-    console.log(id);
     var displayedEvent = document.getElementById(id)
     displayedEvent.classList.add("event-completed");
     eventCompleted(event.target, reminder = true);
@@ -375,7 +373,7 @@ function reminderComplete(event) {
 }
 
 function reminderRemoved(event) {
-    event.target.parentElement.remove();
+    event.parentElement.remove();
 }
 
 /*------------------------------------
@@ -383,7 +381,6 @@ EVENT EXPIRED, WARNING LOGIC
 ---------------------------------------*/
 
 function addWarning(event, date) {
-    //console.log(date.getMonth())
     var monthYear = months[date.getMonth()] + date.getFullYear();
     var day = date.getDate();
     listExpired.insertAdjacentHTML("afterbegin", `<li ><span>${event.title}</span> <input id = warning-${event.id} data-id =${event.id}
@@ -456,7 +453,7 @@ function removeEventList(event) {
     event.currentTarget.removeEventListener("mouseout", removeEventList);
 }
 
-/* ---------------------------
+/* --------------------------------
 NAVIGATION THROUGH MONTHS
 -----------------------------------*/
 
@@ -521,7 +518,6 @@ function createEvent() {
     var eventId = idEvent();
     var Rdisplayed = true;
     if (timerRemind.value) Rdisplayed = false;
-    console.log("event creation, reminder:", timerRemind.value);
     return {
         id: eventId,
         title: titleEvent.trim(),
@@ -537,7 +533,7 @@ function createEvent() {
     }
 }
 
-/* function for getting the month from localstorage if it exists, and if not ( first time creating an event in a given month)
+/* Function for getting the month from localstorage if it exists, and if not ( first time creating an event in a given month)
 create the month and store it */
 
 function getMonthObject(name, event) {
@@ -720,9 +716,6 @@ function askRemove() {
 function removeEvent() {
     hideEventInfo();
     hideAskRemove();
-    toggleInfoWindow();
-    infoWindow.textContent = "Event succesfully removed";
-    setTimeout(toggleInfoWindow, 1500);
     var id = checkTitle.dataset.id;
     var day = checkTitle.dataset.day;
     var storedMonth = JSON.parse(localStorage.getItem(displayedMonth.getMonthYear()));
