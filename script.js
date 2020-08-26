@@ -592,6 +592,7 @@ function validate() {
     }
     if (remindExpire.checked) {
         var dateRemind = new Date();
+
         dateRemind.setTime(dateRemind.getTime() + timerRemindMillis(timerRemind.value));
         if (timerRemind.value == "") {
             remindExpire.parentElement.insertAdjacentHTML(
@@ -833,7 +834,7 @@ function timerRemindMillis(value) {
             break;
         }
         case "1 hour": {
-            millis = "3600000"
+            millis *= 12;
             break;
         }
         default: {
