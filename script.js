@@ -158,10 +158,8 @@ function checkEvents(currentDay) {
 }
 
 /* --------------------------------------------------------------
-
 Function only called when user opens or refreshes the calendar,
 which checks the status of the events from the beginning of the month
-
 ---------------------------------------------------------------- */
 
 function checkEventsMonth(monthStored) {
@@ -186,9 +184,7 @@ function checkEventsMonth(monthStored) {
 }
 
 /* ----------------------------------------------
-
 LOGIC FOR BUILDING THE CALENDAR
-
 -----------------------------------------------*/
 
 // Storage  logic  and data retrieve based on 'month-year' objects. For instance August2020,September2020,....
@@ -624,11 +620,13 @@ function validate() {
     return validation; // true if validation passed, else false
 }
 
+
 /* ---------------------------------------
 
 Show and hide windows, toggle functionality
 
 --------------------------------------*/
+
 
 function cancelEvent() {
     clearErrors();
@@ -799,7 +797,9 @@ function clearCalendar() {
 function clearForm() {
     inputTitle.value = "";
     timerRemind.value = "";
-    inputEventDescription.textContent = "";
+    inputEventDescription.value = "";
+    eventType.value = "";
+
 
 }
 
