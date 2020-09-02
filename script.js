@@ -664,9 +664,7 @@ function windowOnClick(event) {
 }
 
 /* ------------------------------------------
-
 Populate fields with stored information, on event clicked
-
 --------------------------------------------------*/
 
 function showEventInfo(event) {
@@ -742,9 +740,7 @@ function removeEvent() {
 }
 
 /*----------------------------
-
 Save updated information we have changed from the event ( only the description)
-
 ----------------------------*/
 
 function saveCheckEvent() {
@@ -797,8 +793,6 @@ function clearForm() {
     timerRemind.value = "";
     inputEventDescription.value = "";
     eventType.value = "";
-
-
 }
 
 function clearErrors() {
@@ -902,7 +896,6 @@ function showAskRemove() {
     windowRemoveEvent.classList.add("show-info");
     windowRemoveEvent.style.zIndex = 5;
 }
-
 /* cancel the removing operation */
 
 function hideAskRemove() {
@@ -928,7 +921,6 @@ function populateMonth(len) {
 /* sorting events based on their initial date*/
 
 function compareDateIni(event1, event2) {
-
     if (event1.millis < event2.millis) {
         return -1;
     }
