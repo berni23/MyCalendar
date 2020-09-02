@@ -93,7 +93,6 @@ INITIALIZE CALENDAR
 
 initializeCalendar();
 
-
 function initializeCalendar() {
     setDate(today);
     buildMonth(displayedMonth);
@@ -146,13 +145,15 @@ function checkEvents(currentDay) {
             todayStored[i].reminderDisplayed = true;
             windowReminder = true;
         }
-        if (windoWarning) {
-            showWarning();
-        }
-        if (windowReminder || windoWarning) {
-            monthUpdated[dayNum - 1] = todayStored;
-            saveMonth(monthUpdated, currentMonth.getMonthYear());
-        }
+
+    }
+
+    if (windoWarning) {
+        showWarning();
+    }
+    if (windowReminder || windoWarning) {
+        monthUpdated[dayNum - 1] = todayStored;
+        saveMonth(monthUpdated, currentMonth.getMonthYear());
     }
 
 }
@@ -622,11 +623,8 @@ function validate() {
 
 
 /* ---------------------------------------
-
 Show and hide windows, toggle functionality
-
 --------------------------------------*/
-
 
 function cancelEvent() {
     clearErrors();
