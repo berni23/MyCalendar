@@ -80,7 +80,10 @@ var currentMonth = monthYear(today.getMonth(), today.getFullYear());
 var displayedMonth = monthYear(today.getMonth(), today.getFullYear());
 var timerCheckEvents;
 var season = "summer";
+
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var monthString = months[5];
+
 var daysWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var daysWeekShort = daysWeek.map(el => el.slice(0, 3));
 var monthsShort = months.map(el => el.slice(0, 3));
@@ -297,14 +300,23 @@ function buildMonth(month) {
     // Populate calendar days
 
     function seasonClass(numMonth) {
-        mainHeader.classList.remove(season);
+        mainHeader.classList.remove(monthString);
+        mainContainer.classList.remove(monthString);
+        mainHeader.classList.remove(season)
         mainContainer.classList.remove(season);
+
         if (numMonth < 2 || numMonth == 11) season = "winter";
         else if (numMonth > 7) season = "autum";
         else if (numMonth > 4 && numMonth < 8) season = "summer";
         else season = "spring";
+        monthString = months[numMonth]
+
         mainHeader.classList.add(season);
         mainContainer.classList.add(season);
+        mainHeader.classList.add(monthString);
+        mainContainer.classList.add(monthString);
+
+
     }
 }
 
@@ -865,7 +877,8 @@ function handleKeyDown(event) {
     if (event.keyCode === 27) { // hide modal on esc key pressed
         modal.classList.remove("show-modal");
         hideEventInfo();
-    }
+    } else if (event.keyCode === 39) nextMonth();
+    else if (event.keyCode === 37) previousMonth();
 }
 
 /* number of days in a month*/

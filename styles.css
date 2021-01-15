@@ -55,6 +55,36 @@ season styles
     color: goldenrod;
 }
 
+.summer .cell:hover {
+
+    background-color: rgb(218, 165, 32, 0.1);
+    color: goldenrod;
+}
+
+
+.autum .cell:hover {
+
+    background-color: rgb(165, 42, 42, 0.1);
+    color: rgb(165, 42, 42, 0.5)
+}
+
+
+.winter .cell:hover {
+
+    background-color: rgb(72, 72, 153, 0.1);
+    color: rgb(165, 42, 42, 0.5);
+}
+
+
+
+.spring .cell:hover {
+
+    background-color: rgb(144, 238, 144, 0.1);
+
+    color: rgb(144, 238, 144, 0.5);
+
+}
+
 .summer .season-icon {
     background-image: url("images/summer.jpeg");
 }
@@ -65,7 +95,7 @@ season styles
 }
 
 .summer .calendar-container {
-    background-image: url("images/summer.svg")
+    background-image: url("images/summerIcon.svg")
 }
 
 /* Autum*/
@@ -282,10 +312,12 @@ Days
     color: black;
     overflow: hidden;
     white-space: nowrap;
+    cursor: pointer;
 }
 
 .cell:hover {
     overflow: visible;
+    /* background-color: rgb(103, 193, 115, 0.3); */
 }
 
 .cell:hover .extra-break {
