@@ -16,7 +16,7 @@ body {
     text-align: center;
     padding: 0em;
     max-width: 1700px;
-    margin: 0;
+    margin-left: 100px;
     align-items: center;
 }
 
@@ -65,7 +65,7 @@ season styles
 }
 
 .summer .calendar-container {
-    background-image: url("images/ice_cream_icon.png")
+    background-image: url("images/summer.svg")
 }
 
 /* Autum*/
@@ -84,7 +84,7 @@ season styles
 }
 
 .autum .calendar-container {
-    background-image: url("images/autum_background.png");
+    background-image: url("images/autumn.svg");
 }
 
 
@@ -92,7 +92,7 @@ season styles
 
 .winter .string-days,
 .winter .today-caption {
-    color: blue;
+    color: rgb(72, 72, 153);
 }
 
 .winter .season-icon {
@@ -100,18 +100,18 @@ season styles
 }
 
 .winter .today-cell>span {
-    background-color: blue
+    background-color: rgb(72, 72, 153, 0.5);
 }
 
 .winter .calendar-container {
-    background-image: url("images/winter_background.png")
+    background-image: url("images/winterIcon.svg")
 }
 
 /* Spring*/
 
 .spring .string-days,
 .spring .today-caption {
-    color: lightgreen;
+    color: rgb(144, 238, 144, 0.5)
 }
 
 .spring .season-icon {
@@ -119,11 +119,11 @@ season styles
 }
 
 .spring .today-cell>span {
-    background-color: lightgreen
+    background-color: rgb(144, 238, 144, 0.5)
 }
 
 .spring .calendar-container {
-    background-image: url("images/spring_background.png");
+    background-image: url("images/spring.svg");
 }
 
 
@@ -250,7 +250,7 @@ main {
     height: 85%;
     display: flex;
     flex-wrap: wrap;
-    background-image: url("images/spring_background.png");
+    background-image: url("images/spring.svg");
     background-size: 100vh;
     background-position: 50%;
     background-repeat: no-repeat;
